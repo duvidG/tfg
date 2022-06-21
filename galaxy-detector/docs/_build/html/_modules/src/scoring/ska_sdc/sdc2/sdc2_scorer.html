@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.scoring.ska_sdc.sdc2.sdc2_scorer &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+      <li>src.scoring.ska_sdc.sdc2.sdc2_scorer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.scoring.ska_sdc.sdc2.sdc2_scorer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.common.models.exceptions</span> <span class="kn">import</span> <span class="n">NoScoreException</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.common.utils.cat_io</span> <span class="kn">import</span> <span class="n">load_dataframe</span><span class="p">,</span> <span class="n">setup_logging</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.data.data_resources</span> <span class="kn">import</span> <span class="n">SDC2_CONFIG_PATH</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc2.utils.create_score</span> <span class="kn">import</span> <span class="n">create_sdc_score</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc2.utils.sdc2_xmatch</span> <span class="kn">import</span> <span class="n">Sdc2XMatch</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc2.utils.xmatch_postprocessing</span> <span class="kn">import</span> <span class="n">XMatchPostprocessing</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc2.utils.xmatch_preprocessing</span> <span class="kn">import</span> <span class="n">XMatchPreprocessing</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc2.validate</span> <span class="kn">import</span> <span class="n">Validation</span>
+
+
+<div class="viewcode-block" id="Sdc2Scorer"><a class="viewcode-back" href="../../../../../src.scoring.ska_sdc.sdc2.html#src.scoring.ska_sdc.Sdc2Scorer">[docs]</a><span class="k">class</span> <span class="nc">Sdc2Scorer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The SDC2 scorer class.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cat_sub (:obj:`pandas.DataFrame`): The submission catalogue.</span>
+<span class="sd">        cat_truth (:obj:`pandas.DataFrame`): The truth catalogue.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cat_sub</span><span class="p">,</span> <span class="n">cat_truth</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cat_sub</span> <span class="o">=</span> <span class="n">cat_sub</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cat_truth</span> <span class="o">=</span> <span class="n">cat_truth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">SDC2_CONFIG_PATH</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_score</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scoring_complete</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Run validation.</span>
+        <span class="c1">#</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Sdc2Scorer.from_txt"><a class="viewcode-back" href="../../../../../src.scoring.ska_sdc.sdc2.html#src.scoring.ska_sdc.Sdc2Scorer.from_txt">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_txt</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">sub_path</span><span class="p">,</span>
+        <span class="n">truth_path</span><span class="p">,</span>
+        <span class="n">sub_skiprows</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">truth_skiprows</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an SDC2 scorer class from two source catalogues in text format.</span>
+
+<span class="sd">        The catalogues must have a header row of column names that matches the expected</span>
+<span class="sd">        column names in the config file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sub_path (:obj:`str`): Path to the submission catalogue.</span>
+<span class="sd">            truth_path (:obj:`str`): Path to the truth catalogue.</span>
+<span class="sd">            sub_skiprows (:obj:`int`, optional): Number of rows to skip in</span>
+<span class="sd">                submission catalogue. Defaults to 0.</span>
+<span class="sd">            truth_skiprows (:obj:`int`, optional): Number of rows to skip in</span>
+<span class="sd">                truth catalogue. Defaults to 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Column names are inferred from header and can be validated against the config</span>
+        <span class="n">cat_sub</span> <span class="o">=</span> <span class="n">load_dataframe</span><span class="p">(</span><span class="n">sub_path</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip_n</span><span class="o">=</span><span class="n">sub_skiprows</span><span class="p">)</span>
+        <span class="n">cat_truth</span> <span class="o">=</span> <span class="n">load_dataframe</span><span class="p">(</span><span class="n">truth_path</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip_n</span><span class="o">=</span><span class="n">truth_skiprows</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">cat_sub</span><span class="p">,</span> <span class="n">cat_truth</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_create_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">detail</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute the scoring pipeline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">setup_logging</span><span class="p">()</span>
+        <span class="n">pipeline_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Scoring pipeline started&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Preprocess input submission and truth catalogues.</span>
+        <span class="c1">#</span>
+        <span class="n">n_det</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat_sub</span><span class="p">)</span>
+
+        <span class="n">cat_sub_prep</span> <span class="o">=</span> <span class="n">XMatchPreprocessing</span><span class="p">(</span>
+            <span class="n">step_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ScaleAndCalculateLargestSize&quot;</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">preprocess</span><span class="p">(</span><span class="n">cat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cat_sub</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">cat_truth_prep</span> <span class="o">=</span> <span class="n">XMatchPreprocessing</span><span class="p">(</span>
+            <span class="n">step_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ScaleAndCalculateLargestSize&quot;</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">preprocess</span><span class="p">(</span><span class="n">cat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cat_truth</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="c1"># Perform crossmatch to generate dataframe of candidate matches.</span>
+        <span class="c1">#</span>
+        <span class="n">all_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sub_cat_columns</span><span class="p">()</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;conv_size&quot;</span><span class="p">,</span> <span class="s2">&quot;spectral_size&quot;</span><span class="p">]</span>
+        <span class="n">cand_cat_sub</span> <span class="o">=</span> <span class="n">Sdc2XMatch</span><span class="p">(</span>
+            <span class="n">cat_sub</span><span class="o">=</span><span class="n">cat_sub_prep</span><span class="p">,</span> <span class="n">cat_truth</span><span class="o">=</span><span class="n">cat_truth_prep</span><span class="p">,</span> <span class="n">all_col</span><span class="o">=</span><span class="n">all_col</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;crossmatch_kdtree&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Postprocess crossmatched catalogue.</span>
+        <span class="c1">#</span>
+        <span class="n">cand_cat_sub_postp</span> <span class="o">=</span> <span class="n">XMatchPostprocessing</span><span class="p">(</span>
+            <span class="n">step_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CalculateMultidErr&quot;</span><span class="p">,</span> <span class="s2">&quot;Sieve&quot;</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">postprocess</span><span class="p">(</span><span class="n">cat</span><span class="o">=</span><span class="n">cand_cat_sub</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="c1"># Construct sdc_score object.</span>
+        <span class="c1">#</span>
+
+        <span class="n">sdc_score</span> <span class="o">=</span> <span class="n">create_sdc_score</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+            <span class="n">cand_cat_sub_postp</span><span class="p">,</span>
+            <span class="n">n_det</span><span class="p">,</span>
+            <span class="n">train</span><span class="p">,</span>
+            <span class="n">detail</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Scoring pipeline complete. Elapsed time: </span><span class="si">{:.2f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">pipeline_start</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Final score: </span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sdc_score</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">sdc_score</span>
+
+<div class="viewcode-block" id="Sdc2Scorer.get_sub_cat_columns"><a class="viewcode-back" href="../../../../../src.scoring.ska_sdc.sdc2.html#src.scoring.ska_sdc.Sdc2Scorer.get_sub_cat_columns">[docs]</a>    <span class="k">def</span> <span class="nf">get_sub_cat_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;general&quot;</span><span class="p">][</span><span class="s2">&quot;sub_cat_column_names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate DataFrames and config.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Validation</span><span class="o">.</span><span class="n">is_valid_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="n">sub_cat_column_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sub_cat_columns</span><span class="p">()</span>
+        <span class="n">Validation</span><span class="o">.</span><span class="n">is_valid_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat_sub</span><span class="p">,</span> <span class="n">sub_cat_column_names</span><span class="p">)</span>
+        <span class="n">Validation</span><span class="o">.</span><span class="n">is_valid_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat_truth</span><span class="p">,</span> <span class="n">sub_cat_column_names</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Sdc2Scorer.is_scoring_complete"><a class="viewcode-back" href="../../../../../src.scoring.ska_sdc.sdc2.html#src.scoring.ska_sdc.Sdc2Scorer.is_scoring_complete">[docs]</a>    <span class="k">def</span> <span class="nf">is_scoring_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scoring_complete</span></div>
+
+<div class="viewcode-block" id="Sdc2Scorer.run"><a class="viewcode-back" href="../../../../../src.scoring.ska_sdc.sdc2.html#src.scoring.ska_sdc.Sdc2Scorer.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the scoring pipeline.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`ska_sdc.sdc2.models.sdc2_score.Sdc2Score`: The calculated</span>
+<span class="sd">            SDC2 score object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_score</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">detail</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scoring_complete</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the resulting Sdc2Score object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`ska_sdc.sdc2.models.sdc2_score.Sdc2Score`: The calculated SDC2 score</span>
+<span class="sd">            object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="s2">&quot;No score calculated. Use the run method to calculate a score.&quot;</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NoScoreException</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_score</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

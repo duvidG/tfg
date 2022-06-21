@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.data_modifications.data_splitting &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>src.data_modifications.data_splitting</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.data_modifications.data_splitting</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Fri Mar  4 14:00:22 2022</span>
+
+<span class="sd">@author: dgiron</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">src.errors</span> <span class="kn">import</span> <span class="n">DimensionError</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">def</span> <span class="nf">__last_minicube_hor</span><span class="p">(</span><span class="n">multi_row</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">,</span> <span class="n">remaining_pixels</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> 
+                        <span class="n">overlapping</span><span class="p">,</span> <span class="n">catalogue</span><span class="p">,</span> <span class="n">len_vert</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the last row of minicubes. Designed to calculate it with and </span>
+<span class="sd">    without overlap.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    multi_row : int</span>
+<span class="sd">        number to multiply the overlap of the down part of the row of minicubes.</span>
+<span class="sd">    i : int</span>
+<span class="sd">        number of minicubes - 1.</span>
+<span class="sd">    pixel_per_box : int</span>
+<span class="sd">        quotient of number of pixels in one direction over number of boxes.</span>
+<span class="sd">    remaining_pixels : int</span>
+<span class="sd">        remainder of the division.</span>
+<span class="sd">    data : pd.DataFrame</span>
+<span class="sd">        2D dataframe with data. The labels must be in pixels, starting from zero.</span>
+<span class="sd">    overlapping : int</span>
+<span class="sd">        number of pixels that will form the overlapping region.</span>
+<span class="sd">    catalogue : pd.DataFrame</span>
+<span class="sd">        catalogue with all the sources.</span>
+<span class="sd">    len_vert : int</span>
+<span class="sd">        length of the datacube.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_mod_fin : pd.DataFrame</span>
+<span class="sd">        small datacube with the mirrored part.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Rows to fill the last datacubes</span>
+    <span class="n">lwr_lim</span> <span class="o">=</span> <span class="n">len_vert</span> <span class="o">-</span> <span class="p">(</span><span class="n">pixel_per_box</span> <span class="o">-</span> <span class="n">remaining_pixels</span><span class="p">)</span>
+    <span class="n">uppr_lim</span> <span class="o">=</span> <span class="n">len_vert</span>
+    
+    <span class="n">esp</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">lwr_lim</span><span class="p">:</span><span class="n">uppr_lim</span><span class="p">,</span> <span class="p">:]</span>
+    
+    <span class="c1"># Remaining rows</span>
+    <span class="n">lwr_lim2</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">pixel_per_box</span><span class="o">-</span><span class="n">multi_row</span><span class="o">*</span><span class="n">overlapping</span>
+    <span class="n">data_mod_especial</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">lwr_lim2</span><span class="p">:,</span> <span class="p">:]</span> 
+    
+    <span class="c1"># Take mirrored image</span>
+    <span class="n">esp</span> <span class="o">=</span> <span class="n">esp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Transform the index (pixel number) to be a continuation of the last one</span>
+    <span class="n">first_esp_index</span> <span class="o">=</span> <span class="n">data_mod_especial</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> 
+    <span class="n">new_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">first_esp_index</span><span class="p">,</span> <span class="n">first_esp_index</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">esp</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+    <span class="n">esp</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">new_index</span>
+    
+    <span class="c1"># Sum the mirrored and the original images</span>
+    <span class="n">data_mod_fin</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">data_mod_especial</span><span class="p">,</span> <span class="n">esp</span><span class="p">])</span>
+    
+    <span class="c1"># Catalogue actualization</span>
+    
+    <span class="c1"># Select sources within the limits of the brand new datacube</span>
+    <span class="n">cat</span> <span class="o">=</span> <span class="n">catalogue</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">lwr_lim</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span><span class="o">&lt;=</span> <span class="n">uppr_lim</span><span class="p">),</span> <span class="p">:]</span>
+    
+    <span class="c1"># Mirror sources</span>
+    <span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">&#39;dec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">cat</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">len_vert</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+    
+    <span class="c1"># Add them to the bottom of the original catalogue, with the index being 1 </span>
+    <span class="c1"># more than the last index</span>
+    <span class="n">first_cat_index</span> <span class="o">=</span> <span class="n">catalogue</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> 
+    <span class="n">new_cat_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">first_cat_index</span><span class="p">,</span> <span class="n">first_cat_index</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">cat</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+    <span class="n">cat</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">new_cat_index</span>      
+
+    <span class="c1"># Remove the duplicated galaxies in the catalogue, reseting the index</span>
+    <span class="n">catalogue_fin</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">catalogue</span><span class="p">,</span> <span class="n">cat</span><span class="p">])</span>
+    <span class="n">catalogue_fin</span> <span class="o">=</span> <span class="n">catalogue_fin</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">,</span> <span class="s1">&#39;dec&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">data_mod_fin</span><span class="p">,</span> <span class="n">catalogue_fin</span>
+    
+
+<span class="k">def</span> <span class="nf">__last_minicube_vert</span><span class="p">(</span><span class="n">multi_col</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">,</span> <span class="n">remaining_pixels</span><span class="p">,</span> <span class="n">data_mod</span><span class="p">,</span> 
+                         <span class="n">overlapping</span><span class="p">,</span> <span class="n">catalogue</span><span class="p">,</span> <span class="n">len_vert</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the last minicubes in a row. Designed to calculate it with and </span>
+<span class="sd">    without overlap.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    multi_col : int</span>
+<span class="sd">        number to multiply the overlap of the left part of the last minicube in </span>
+<span class="sd">        a row.</span>
+<span class="sd">    i : int</span>
+<span class="sd">        number of minicubes - 1.</span>
+<span class="sd">    pixel_per_box : int</span>
+<span class="sd">        quotient of number of pixels in one direction over number of boxes.</span>
+<span class="sd">    remaining_pixels : int</span>
+<span class="sd">        remainder of the division.</span>
+<span class="sd">    data_mod : pd.DataFrame</span>
+<span class="sd">        row of minicubes.</span>
+<span class="sd">    overlapping : int</span>
+<span class="sd">        number of pixels that will form the overlapping region..</span>
+<span class="sd">    catalogue : pd.DataFrame</span>
+<span class="sd">        catalogue with all the sources.</span>
+<span class="sd">    len_vert : int</span>
+<span class="sd">        length of the datacube.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_mod_fin : pd.DataFrame</span>
+<span class="sd">        small datacube with the mirrored part.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Columns to fill the last datacubes</span>
+    <span class="n">left_lim</span> <span class="o">=</span>  <span class="n">len_vert</span> <span class="o">-</span> <span class="p">(</span><span class="n">pixel_per_box</span> <span class="o">-</span> <span class="n">remaining_pixels</span><span class="p">)</span>
+    <span class="n">right_lim</span> <span class="o">=</span> <span class="n">len_vert</span>
+    
+    <span class="n">esp</span> <span class="o">=</span> <span class="n">data_mod</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">left_lim</span><span class="p">:</span><span class="n">right_lim</span><span class="p">]</span>
+    
+    <span class="c1"># Remaining columns</span>
+    <span class="n">mini_data_especial</span> <span class="o">=</span> <span class="n">data_mod</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="o">*</span><span class="n">pixel_per_box</span> <span class="o">-</span> <span class="n">multi_col</span><span class="o">*</span><span class="n">overlapping</span><span class="p">:]</span>
+    
+    <span class="c1"># Take mirrored image</span>
+    <span class="n">esp</span> <span class="o">=</span> <span class="n">esp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Transform the index (pixel number) to be a continuation of the last one</span>
+    <span class="n">first_esp_index</span> <span class="o">=</span> <span class="n">mini_data_especial</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">new_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">first_esp_index</span><span class="p">,</span> <span class="n">first_esp_index</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">esp</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+    <span class="n">esp</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">new_index</span>
+    
+    <span class="c1"># Catalogue part</span>
+    
+    <span class="c1"># Select sources within the limits of the brand new datacube</span>
+    <span class="n">cat</span> <span class="o">=</span> <span class="n">catalogue</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">left_lim</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">]</span><span class="o">&lt;=</span> <span class="n">right_lim</span><span class="p">),</span> <span class="p">:]</span>
+    
+    <span class="c1"># Mirror sources</span>
+    <span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">&#39;ra&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">cat</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">len_vert</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+    
+    <span class="c1"># Add them to the bottom of the original catalogue, with the index being 1 </span>
+    <span class="c1"># more than the last index</span>
+    <span class="n">first_cat_index</span> <span class="o">=</span> <span class="n">catalogue</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">new_index_cat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">first_cat_index</span><span class="p">,</span> <span class="n">first_cat_index</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">cat</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+    <span class="n">cat</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">new_index_cat</span>
+    
+    <span class="c1"># Remove the duplicated galaxies in the catalogue, reseting the index</span>
+    <span class="n">cat_fin</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">catalogue</span><span class="p">,</span> <span class="n">cat</span><span class="p">])</span>
+    <span class="n">cat_fin</span> <span class="o">=</span> <span class="n">cat_fin</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">,</span> <span class="s1">&#39;dec&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">mini_data_especial</span><span class="p">,</span> <span class="n">esp</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">cat_fin</span>
+    
+<div class="viewcode-block" id="overlap_bigger_than_remaining"><a class="viewcode-back" href="../../../src.data_modifications.html#src.data_modifications.data_splitting.overlap_bigger_than_remaining">[docs]</a><span class="k">def</span> <span class="nf">overlap_bigger_than_remaining</span><span class="p">(</span><span class="n">number_of_boxes</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">,</span> <span class="n">remaining_pixels</span><span class="p">,</span> 
+                                  <span class="n">data</span><span class="p">,</span> <span class="n">overlapping</span><span class="p">,</span> <span class="n">multi_row</span><span class="p">,</span> <span class="n">multi_col</span><span class="p">,</span> <span class="n">catalogue</span><span class="p">,</span> 
+                                  <span class="n">len_vert</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Algorithm to split the full datacube when the number of pixels in the overlapping </span>
+<span class="sd">    part is bigger than the number of pixels w/o mini datacube. This remaining </span>
+<span class="sd">    pixels will form a mini datacube with the mirrored image of the full datacube </span>
+<span class="sd">    (pixels of the mirrored image are taken until the last mini cube is full). </span>
+<span class="sd">    All the mini datacubes will have the same dimensions. Overlaps in the borders </span>
+<span class="sd">    of the datacube are not considered. Instead a double sized overlap is </span>
+<span class="sd">    considered in the borders of the minicube which are not in the border of </span>
+<span class="sd">    the full datacube.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    number_of_boxes : int</span>
+<span class="sd">        number of boxes to divide the dataset in each direction..</span>
+<span class="sd">    pixel_per_box : int</span>
+<span class="sd">        quotient of number of pixels in one direction over number of boxes.</span>
+<span class="sd">    remaining_pixels : int</span>
+<span class="sd">        remainder of the division.</span>
+<span class="sd">    data : pd.DataFrame</span>
+<span class="sd">        2D dataframe with data. The labels must be in pixels, starting from zero</span>
+<span class="sd">    overlapping : int</span>
+<span class="sd">        number of pixels that will form the overlapping region.</span>
+<span class="sd">    multi_row : np.ndarray</span>
+<span class="sd">        array with the numbers to multiply the horizontal overlap. First element </span>
+<span class="sd">        multiplies the left overlap and second the right one</span>
+<span class="sd">    multi_col : np.ndarray</span>
+<span class="sd">        array with the numbers to multiply the vertical overlap. First element </span>
+<span class="sd">        multiplies the overlap above and second the below one.</span>
+<span class="sd">    catalogue : pd.DataFrame</span>
+<span class="sd">        catalogue with all the sources.</span>
+<span class="sd">    len_vert : int</span>
+<span class="sd">        length of the datacube.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_splitted : list</span>
+<span class="sd">        list containing all the splitted data. Each element of the list, i.e., </span>
+<span class="sd">        each small datacube has the same dimensions.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_splitted</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">truth_cat_splitted</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Loop over the rows</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_boxes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># If the overlap of the last full minicube exceeds the number of pixels </span>
+        <span class="c1"># remaining, some pixels of the datacube with a mirrored part must be taken. </span>
+        <span class="c1"># So it should be calculated (w/o overlap)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">number_of_boxes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span> 
+            <span class="n">multi_row</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Calculate last minicube w/o overlap</span>
+            <span class="n">data_mod_fin</span><span class="p">,</span> <span class="n">catalogue</span> <span class="o">=</span> <span class="n">__last_minicube_hor</span><span class="p">(</span><span class="n">multi_row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">,</span> 
+                                                          <span class="n">remaining_pixels</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">overlapping</span><span class="p">,</span>
+                                                          <span class="n">catalogue</span><span class="p">,</span> <span class="n">len_vert</span><span class="p">)</span>
+            
+            <span class="c1"># Calculate (i+1) th datacube but w/o the overlap that will affect</span>
+            <span class="c1"># the last minicube, only with the regular one.</span>
+            <span class="n">multi_row</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">limit1</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">pixel_per_box</span><span class="p">)</span> <span class="o">-</span> <span class="n">multi_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">overlapping</span> 
+            <span class="n">limit2</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">pixel_per_box</span><span class="p">)</span>
+            <span class="n">data_mod_1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">limit1</span> <span class="p">:</span> <span class="n">limit2</span><span class="p">,</span> <span class="p">:]</span>
+            
+            <span class="c1"># The other overlap is taken from the mirrored datacube previously created</span>
+            <span class="n">data_mod_2</span> <span class="o">=</span> <span class="n">data_mod_fin</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">overlapping</span> <span class="p">,</span> <span class="p">:]</span>
+            
+            <span class="c1"># Finally, they are merged into one dataframe</span>
+            <span class="n">data_mod</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">data_mod_1</span><span class="p">,</span> <span class="n">data_mod_2</span><span class="p">])</span>
+            
+        <span class="c1"># The remaining pixels are considered, with a mirrored part, to form a </span>
+        <span class="c1"># full size minicube. The overlapping is doubled in the regular borders </span>
+        <span class="c1">#to compensate the border of the full datacube</span>
+        <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="n">number_of_boxes</span><span class="p">:</span>
+            <span class="n">multi_row</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">data_mod</span><span class="p">,</span> <span class="n">catalogue</span> <span class="o">=</span> <span class="n">__last_minicube_hor</span><span class="p">(</span><span class="n">multi_row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">,</span> 
+                                                      <span class="n">remaining_pixels</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">overlapping</span><span class="p">,</span> 
+                                                      <span class="n">catalogue</span><span class="p">,</span> <span class="n">len_vert</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Regular rows</span>
+                <span class="n">multi_row</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            
+            <span class="c1"># If it is not the last row it selects the pixels using the number of </span>
+            <span class="c1"># pixels per cube parameter</span>
+            <span class="n">limit1</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">pixel_per_box</span><span class="p">)</span> <span class="o">-</span> <span class="n">multi_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">overlapping</span>
+            <span class="n">limit2</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">pixel_per_box</span> <span class="o">+</span> <span class="n">multi_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">overlapping</span>
+            <span class="n">data_mod</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">limit1</span> <span class="p">:</span> <span class="n">limit2</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="c1"># Same but for columns in the selected row</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_boxes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="n">number_of_boxes</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">multi_col</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">mini_data_fin</span><span class="p">,</span> <span class="n">catalogue</span> <span class="o">=</span> <span class="n">__last_minicube_vert</span><span class="p">(</span><span class="n">multi_col</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">var</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> 
+                                                                <span class="n">pixel_per_box</span><span class="p">,</span> 
+                                                                <span class="n">remaining_pixels</span><span class="p">,</span> 
+                                                                <span class="n">data_mod</span><span class="p">,</span> <span class="n">overlapping</span><span class="p">,</span> 
+                                                                <span class="n">catalogue</span><span class="p">,</span> <span class="n">len_vert</span><span class="p">)</span>
+                <span class="n">multi_col</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+                
+                <span class="n">limit1</span> <span class="o">=</span> <span class="p">(</span><span class="n">var</span> <span class="o">*</span> <span class="n">pixel_per_box</span><span class="p">)</span> <span class="o">-</span> <span class="n">multi_col</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">overlapping</span>
+                <span class="n">limit2</span> <span class="o">=</span> <span class="p">(</span><span class="n">var</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">pixel_per_box</span><span class="p">)</span>
+                <span class="n">mini_data_1</span> <span class="o">=</span> <span class="n">data_mod</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">limit1</span> <span class="p">:</span> <span class="n">limit2</span><span class="p">]</span>
+                <span class="n">mini_data_2</span> <span class="o">=</span> <span class="n">mini_data_fin</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span> <span class="p">,</span> <span class="p">:</span><span class="n">overlapping</span><span class="p">]</span>
+                <span class="n">mini_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">mini_data_1</span><span class="p">,</span> <span class="n">mini_data_2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">var</span> <span class="o">==</span> <span class="n">number_of_boxes</span><span class="p">:</span>
+                <span class="n">multi_col</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">mini_data_fin</span><span class="p">,</span> <span class="n">catalogue</span> <span class="o">=</span> <span class="n">__last_minicube_vert</span><span class="p">(</span><span class="n">multi_col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">var</span><span class="p">,</span> 
+                                                                <span class="n">pixel_per_box</span><span class="p">,</span> 
+                                                                <span class="n">remaining_pixels</span><span class="p">,</span> 
+                                                                <span class="n">data_mod</span><span class="p">,</span> <span class="n">overlapping</span><span class="p">,</span> 
+                                                                <span class="n">catalogue</span><span class="p">,</span> <span class="n">len_vert</span><span class="p">)</span>
+                <span class="n">mini_data</span> <span class="o">=</span> <span class="n">mini_data_fin</span>
+                
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">multi_col</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> 
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">multi_col</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> 
+                <span class="n">limit1</span> <span class="o">=</span> <span class="n">var</span> <span class="o">*</span> <span class="n">pixel_per_box</span> <span class="o">-</span> <span class="n">overlapping</span> <span class="o">*</span> <span class="n">multi_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">limit2</span> <span class="o">=</span> <span class="p">(</span><span class="n">var</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">pixel_per_box</span> <span class="o">+</span> <span class="n">overlapping</span> <span class="o">*</span> <span class="n">multi_col</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                
+                <span class="n">mini_data</span> <span class="o">=</span> <span class="n">data_mod</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">limit1</span> <span class="p">:</span> <span class="n">limit2</span><span class="p">]</span>
+            <span class="n">data_splitted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mini_data</span><span class="p">)</span>
+            
+            <span class="c1"># Catalogue splitting. Galaxies in the overlapped region are not </span>
+            <span class="c1"># considered as they may be cut by the border of the datacube</span>
+            <span class="n">limit_pixels_vert</span> <span class="o">=</span> <span class="p">(</span><span class="n">mini_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">overlapping</span><span class="p">,</span> 
+                                 <span class="n">mini_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">overlapping</span><span class="p">)</span>
+            <span class="n">limit_pixels_hor</span> <span class="o">=</span> <span class="p">(</span><span class="n">mini_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">overlapping</span><span class="p">,</span> 
+                                <span class="n">mini_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">overlapping</span><span class="p">)</span>
+            
+            <span class="c1"># Loop over every source in the catalogue. If it&#39;s inside the small </span>
+            <span class="c1"># cubes it saves the source in a different dataframe</span>
+            <span class="n">truth_cat_small</span> <span class="o">=</span> <span class="n">catalogue</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">limit_pixels_hor</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> 
+                                             <span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">]</span><span class="o">&lt;=</span> <span class="n">limit_pixels_hor</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&amp;</span> 
+                                              <span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">limit_pixels_vert</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> 
+                                              <span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span><span class="o">&lt;=</span> <span class="n">limit_pixels_vert</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="p">:]</span>
+            <span class="c1"># When the loop is completed, the table is stored                    </span>
+            <span class="n">truth_cat_splitted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">truth_cat_small</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_splitted</span><span class="p">,</span> <span class="n">truth_cat_splitted</span></div>
+
+
+<div class="viewcode-block" id="overlap_smaller_than_remaining"><a class="viewcode-back" href="../../../src.data_modifications.html#src.data_modifications.data_splitting.overlap_smaller_than_remaining">[docs]</a><span class="k">def</span> <span class="nf">overlap_smaller_than_remaining</span><span class="p">(</span><span class="n">number_of_boxes</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">,</span> <span class="n">remaining_pixels</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> 
+                                   <span class="n">overlapping</span><span class="p">,</span> <span class="n">multi_row</span><span class="p">,</span> <span class="n">multi_col</span><span class="p">,</span> <span class="n">catalogue</span><span class="p">,</span> <span class="n">len_vert</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Algorithm to split the full datacube when the number of pixels in the overlapping </span>
+<span class="sd">    part is smaller than the number of pixels w/o mini datacube. This remaining </span>
+<span class="sd">    pixels will form a mini datacube with the mirrored image of the full datacube </span>
+<span class="sd">    (pixels of the mirrored image are taken until the last mini cube is full). </span>
+<span class="sd">    All the mini datacubes will have the same dimensions. Overlaps in the borders </span>
+<span class="sd">    of the datacube are not considered. Instead a double size overlap is </span>
+<span class="sd">    considered in the borders of the minicube which are not in the border </span>
+<span class="sd">    of the full datacube.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    number_of_boxes : int</span>
+<span class="sd">        number of boxes to divide the dataset in each direction..</span>
+<span class="sd">    pixel_per_box : int</span>
+<span class="sd">        quotient of number of pixels in one direction over number of boxes.</span>
+<span class="sd">    remaining_pixels : int</span>
+<span class="sd">        remainder of the division.</span>
+<span class="sd">    data : pd.DataFrame</span>
+<span class="sd">        2D dataframe with data. The labels must be in pixels, starting from zero</span>
+<span class="sd">    overlapping : int</span>
+<span class="sd">        number of pixels that will form the overlapping region.</span>
+<span class="sd">    multi_row : np.ndarray</span>
+<span class="sd">        array with the numbers to multiply the horizontal overlap. First element</span>
+<span class="sd">        multiplies the left overlap and second the right one</span>
+<span class="sd">    multi_col : np.ndarray</span>
+<span class="sd">        array with the numbers to multiply the vertical overlap. First element</span>
+<span class="sd">        multiplies the overlap above and second the below one.</span>
+<span class="sd">    catalogue : pd.DataFrame</span>
+<span class="sd">        catalogue with all the sources.</span>
+<span class="sd">    len_vert : int</span>
+<span class="sd">        length of the datacube.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_splitted : list</span>
+<span class="sd">        list containing all the splitted data. Each element of the list, i.e.,</span>
+<span class="sd">        each small datacube has the same dimensions</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">data_splitted</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">truth_cat_splitted</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_boxes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">overlapping_borde</span> <span class="o">=</span> <span class="n">overlapping</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">number_of_boxes</span><span class="p">:</span> 
+            <span class="n">multi_row</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">data_mod</span><span class="p">,</span> <span class="n">catalogue</span> <span class="o">=</span> <span class="n">__last_minicube_hor</span><span class="p">(</span><span class="n">multi_row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">,</span> 
+                                                      <span class="n">remaining_pixels</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">overlapping</span><span class="p">,</span> 
+                                                      <span class="n">catalogue</span><span class="p">,</span> <span class="n">len_vert</span><span class="p">)</span>  
+            
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span> 
+                <span class="n">multi_row</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">overlapping_borde</span> <span class="o">=</span> <span class="mi">0</span>
+                
+            <span class="c1"># If it is not the last row it selects the pixels using the number </span>
+            <span class="c1"># of pixels per cube parameter</span>
+            <span class="n">limit1</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">pixel_per_box</span><span class="p">)</span> <span class="o">-</span> <span class="n">multi_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">overlapping</span>
+            <span class="n">limit2</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">pixel_per_box</span> <span class="o">+</span> <span class="n">multi_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">overlapping</span>
+            <span class="n">data_mod</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">limit1</span> <span class="p">:</span> <span class="n">limit2</span><span class="p">,</span> <span class="p">:]</span>
+       
+        <span class="c1"># Loop over each column in a row. Same procedure as before but with columns</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_boxes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">overlapping_borde_col</span> <span class="o">=</span> <span class="n">overlapping</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="n">number_of_boxes</span><span class="p">:</span>
+                <span class="n">multi_col</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">mini_data</span><span class="p">,</span> <span class="n">catalogue</span> <span class="o">=</span> <span class="n">__last_minicube_vert</span><span class="p">(</span><span class="n">multi_col</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">var</span><span class="p">,</span> 
+                                                            <span class="n">pixel_per_box</span><span class="p">,</span> 
+                                                            <span class="n">remaining_pixels</span><span class="p">,</span> 
+                                                            <span class="n">data_mod</span><span class="p">,</span> <span class="n">overlapping</span><span class="p">,</span> 
+                                                            <span class="n">catalogue</span><span class="p">,</span> <span class="n">len_vert</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">var</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">multi_col</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> 
+                    
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">multi_col</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+                    
+                    <span class="n">overlapping_borde_col</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">limit1</span> <span class="o">=</span> <span class="n">var</span> <span class="o">*</span> <span class="n">pixel_per_box</span> <span class="o">-</span> <span class="n">overlapping</span> <span class="o">*</span> <span class="n">multi_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">limit2</span> <span class="o">=</span> <span class="p">(</span><span class="n">var</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">pixel_per_box</span> <span class="o">+</span> <span class="n">overlapping</span> <span class="o">*</span> <span class="n">multi_col</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">mini_data</span> <span class="o">=</span> <span class="n">data_mod</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">limit1</span> <span class="p">:</span> <span class="n">limit2</span><span class="p">]</span>
+            <span class="n">data_splitted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mini_data</span><span class="p">)</span>
+            <span class="c1"># Catalogue splitting. Galaxies in the overlapped region are not </span>
+            <span class="c1"># considered as they may be cut by the border of the datacube</span>
+            <span class="n">limit_pixels_vert</span> <span class="o">=</span> <span class="p">(</span><span class="n">mini_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">overlapping_borde</span><span class="p">,</span> 
+                                 <span class="n">mini_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">overlapping</span><span class="p">)</span>
+            <span class="n">limit_pixels_hor</span> <span class="o">=</span> <span class="p">(</span><span class="n">mini_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">overlapping_borde_col</span><span class="p">,</span> 
+                                <span class="n">mini_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">overlapping</span><span class="p">)</span>
+            
+            <span class="c1"># Loop over every source in the catalogue. If it&#39;s inside the small </span>
+            <span class="c1"># cubes it saves the source in a different dataframe</span>
+            <span class="n">truth_cat_small</span> <span class="o">=</span> <span class="n">catalogue</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">limit_pixels_hor</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> 
+                                             <span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">]</span><span class="o">&lt;=</span> <span class="n">limit_pixels_hor</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> 
+                                              <span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">limit_pixels_vert</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span>
+                                              <span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span><span class="o">&lt;=</span> <span class="n">limit_pixels_vert</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="p">:]</span>
+            
+            <span class="c1"># When the loop is completed, the table is stored                    </span>
+            <span class="n">truth_cat_splitted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">truth_cat_small</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_splitted</span><span class="p">,</span> <span class="n">truth_cat_splitted</span></div>
+    
+<div class="viewcode-block" id="no_remaining_pixels"><a class="viewcode-back" href="../../../src.data_modifications.html#src.data_modifications.data_splitting.no_remaining_pixels">[docs]</a><span class="k">def</span> <span class="nf">no_remaining_pixels</span><span class="p">(</span><span class="n">number_of_boxes</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">,</span> <span class="n">remaining_pixels</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">overlapping</span><span class="p">,</span>
+                        <span class="n">multi_row</span><span class="p">,</span> <span class="n">multi_col</span><span class="p">,</span> <span class="n">catalogue</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Algorithm to split the full datacube when the number of pixels in any direction is a multiple of </span>
+<span class="sd">    the number of datacubes. All the mini datacubes will have the same dimensions. </span>
+<span class="sd">    Overlaps in the borders of the datacube are not considered. Instead a double size overlap is </span>
+<span class="sd">    considered in the borders of the minicube which are not in the border of the full datacube.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    number_of_boxes : int</span>
+<span class="sd">        number of boxes to divide the dataset in each direction.</span>
+<span class="sd">    pixel_per_box : int</span>
+<span class="sd">        quotient of number of pixels in one direction over number of boxes.</span>
+<span class="sd">    remaining_pixels : int</span>
+<span class="sd">        remainder of the division.</span>
+<span class="sd">    data : pd.DataFrame</span>
+<span class="sd">        2D dataframe with data. The labels must be in pixels, starting from zero</span>
+<span class="sd">    overlapping : int</span>
+<span class="sd">        number of pixels that will form the overlapping region.</span>
+<span class="sd">    multi_row : np.ndarray</span>
+<span class="sd">        array with the numbers to multiply the horizontal overlap. First element</span>
+<span class="sd">        multiplies the left overlap and second the right one</span>
+<span class="sd">    multi_col : np.ndarray</span>
+<span class="sd">        array with the numbers to multiply the vertical overlap. First element</span>
+<span class="sd">        multiplies the overlap above and second the below one.</span>
+<span class="sd">    catalogue : pd.DataFrame</span>
+<span class="sd">        catalogue with all the sources.</span>
+<span class="sd">    len_vert : int</span>
+<span class="sd">        length of the datacube.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_splitted : list</span>
+<span class="sd">        list containing all the splitted data. Each element of the list, i.e.,</span>
+<span class="sd">        each small datacube has the same dimensions</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_splitted</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">truth_cat_splitted</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># Loop over all the rows</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_boxes</span><span class="p">):</span>
+        <span class="c1"># If the last row is considered, the overlapping will be on the inner</span>
+        <span class="c1"># part of the small datacube. The same is done for the first row</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">number_of_boxes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">multi_row</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">multi_row</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+                
+        <span class="c1"># Extract the row from the datacube</span>
+        <span class="n">data_mod</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[(</span><span class="n">i</span> <span class="o">*</span> <span class="n">pixel_per_box</span><span class="p">)</span> <span class="o">-</span> <span class="n">overlapping</span> <span class="o">*</span> <span class="n">multi_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span> 
+                             <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">pixel_per_box</span> <span class="o">+</span> <span class="n">overlapping</span> <span class="o">*</span> <span class="n">multi_row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span>
+            
+        <span class="c1"># Same procedure but for columns</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_boxes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="n">number_of_boxes</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">multi_col</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="k">if</span> <span class="n">var</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">multi_col</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> 
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">multi_col</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>        
+            <span class="n">mini_data</span> <span class="o">=</span> <span class="n">data_mod</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">var</span> <span class="o">*</span> <span class="n">pixel_per_box</span> <span class="o">-</span> <span class="n">overlapping</span> <span class="o">*</span> <span class="n">multi_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span> 
+                                      <span class="p">(</span><span class="n">var</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">pixel_per_box</span> <span class="o">+</span> <span class="n">overlapping</span> <span class="o">*</span> <span class="n">multi_col</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">data_splitted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mini_data</span><span class="p">)</span>
+            
+            <span class="c1"># Catalogue splitting. Galaxies in the overlapped region are not</span>
+            <span class="c1"># considered as they may be cut by the border of the datacube</span>
+            <span class="n">limit_pixels_vert</span> <span class="o">=</span> <span class="p">(</span><span class="n">mini_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">overlapping</span><span class="p">,</span> 
+                                 <span class="n">mini_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">overlapping</span><span class="p">)</span>
+            <span class="n">limit_pixels_hor</span> <span class="o">=</span> <span class="p">(</span><span class="n">mini_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">overlapping</span><span class="p">,</span>
+                                <span class="n">mini_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">overlapping</span><span class="p">)</span>
+            
+            <span class="c1"># Loop over every source in the catalogue. If it&#39;s inside the small cubes it saves the source in a different dataframe</span>
+            <span class="n">truth_cat_small</span> <span class="o">=</span> <span class="n">catalogue</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">limit_pixels_hor</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span>
+                                             <span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">]</span><span class="o">&lt;=</span> <span class="n">limit_pixels_hor</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&amp;</span> 
+                                              <span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">limit_pixels_vert</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span>
+                                              <span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span><span class="o">&lt;=</span> <span class="n">limit_pixels_vert</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="p">:]</span>
+            
+            <span class="c1"># When the loop is completed, the table is saved                    </span>
+            <span class="n">truth_cat_splitted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">truth_cat_small</span><span class="p">)</span>      
+    <span class="k">return</span> <span class="n">data_splitted</span><span class="p">,</span> <span class="n">truth_cat_splitted</span></div>
+        
+
+<div class="viewcode-block" id="split_into_small_boxes"><a class="viewcode-back" href="../../../src.data_modifications.html#src.data_modifications.data_splitting.split_into_small_boxes">[docs]</a><span class="k">def</span> <span class="nf">split_into_small_boxes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">final_pixel_per_box</span><span class="p">,</span> <span class="n">catalogue</span><span class="p">,</span> <span class="n">overlapping</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Splits a 2D datacube into the (number of boxes * number of boxes) given as parameter. </span>
+<span class="sd">    It also considers overlapping to include galaxies just in the boundary of </span>
+<span class="sd">    the small datacubes. The catalogue for the sources is also splitted.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : pd.DataFrame</span>
+<span class="sd">        2D dataframe with data.</span>
+<span class="sd">    final_pixel_per_box : int</span>
+<span class="sd">        size of the small datacube in any direction, including overlap.</span>
+<span class="sd">    catalogue: pd.DataFrame</span>
+<span class="sd">        catalogue of the sources in the full datacube. &#39;ra&#39; and &#39;dec&#39; column </span>
+<span class="sd">        must be given in pixels</span>
+<span class="sd">    overlapping : int, optional</span>
+<span class="sd">        number of extra entries to consider in each minicube, given in pixels.</span>
+<span class="sd">        &#39;auto&#39; option uses an overlap equal to the maximum size of a galaxy in</span>
+<span class="sd">        the whole datacube. The default is &#39;auto&#39;.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    DimensionError</span>
+<span class="sd">        if number of boxes is bigger than the number of entries in any direction.</span>
+<span class="sd">        if the remaining pixels are bigger than the length of a small datacube</span>
+<span class="sd">        if overlapping is bigger than the size of a small datacube</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_splitted : list</span>
+<span class="sd">        list with the small dataframes.</span>
+<span class="sd">    truth_cat_splitted : list</span>
+<span class="sd">        list with catalogues for each of the small datacubes</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;mode.chained_assignment&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">len_cube</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">overlapping</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">:</span>
+        <span class="n">overlapping</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">catalogue</span><span class="p">[</span><span class="s1">&#39;hi_size&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        
+    <span class="n">pixel_per_box</span> <span class="o">=</span> <span class="n">final_pixel_per_box</span> <span class="o">-</span> <span class="n">overlapping</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="c1"># Number to multiply the overlapping. First element is start and second is</span>
+    <span class="c1"># stop in the .iloc[]</span>
+    <span class="n">multi_row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">multi_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>  
+    
+    <span class="n">number_of_boxes</span><span class="p">,</span> <span class="n">remaining_pixels</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">len_cube</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">)</span> 
+    
+   
+
+    <span class="k">if</span> <span class="n">overlapping</span> <span class="o">&gt;</span> <span class="n">pixel_per_box</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The biggest galaxy size is bigger than the pixels per &quot;</span><span class="o">+</span>
+                      <span class="s1">&#39;small box, &#39;</span><span class="o">+</span>
+                      <span class="s1">&#39;which has a value of </span><span class="si">{}</span><span class="s1"> pixels.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pixel_per_box</span><span class="p">)</span> <span class="o">+</span>
+                      <span class="s1">&#39;The program will use the number of pixels per box - 1 as overlapping&#39;</span><span class="p">)</span>
+
+        <span class="n">overlapping</span> <span class="o">=</span> <span class="n">pixel_per_box</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">pixel_per_box</span> <span class="o">&lt;=</span> <span class="n">remaining_pixels</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">DimensionError</span><span class="p">(</span><span class="s1">&#39;Too many small datacubes for the lenght of the dataset. &#39;</span>
+                             <span class="o">+</span><span class="s1">&#39;Try with a smaller number&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">number_of_boxes</span> <span class="o">&gt;</span> <span class="n">len_cube</span> <span class="ow">or</span> <span class="n">overlapping</span> <span class="o">&gt;</span> <span class="n">len_cube</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">DimensionError</span><span class="p">(</span><span class="s1">&#39;The number of boxes selected is bigger than the height &#39;</span>
+                             <span class="o">+</span><span class="s1">&#39;or width of the data table&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">overlapping</span> <span class="o">&gt;</span> <span class="n">pixel_per_box</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">DimensionError</span><span class="p">(</span><span class="s1">&#39;The overlapping selected exceeds the length of a minicube. &#39;</span>
+                             <span class="o">+</span><span class="s1">&#39;Please, try with smaller overlapping or less minicubes per line&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Chooses one of the three available functions, depending on the number of pixels remaining</span>
+    <span class="k">if</span> <span class="n">remaining_pixels</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="n">no_remaining_pixels</span><span class="p">(</span><span class="n">number_of_boxes</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">,</span> <span class="n">remaining_pixels</span><span class="p">,</span> 
+                                   <span class="n">data</span><span class="p">,</span> <span class="n">overlapping</span><span class="p">,</span> <span class="n">multi_row</span><span class="p">,</span> <span class="n">multi_col</span><span class="p">,</span> <span class="n">catalogue</span><span class="p">)</span>    
+    
+    <span class="k">elif</span> <span class="n">overlapping</span> <span class="o">&gt;</span> <span class="n">remaining_pixels</span><span class="p">:</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">overlap_bigger_than_remaining</span><span class="p">(</span><span class="n">number_of_boxes</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">,</span> 
+                                             <span class="n">remaining_pixels</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">overlapping</span><span class="p">,</span> 
+                                             <span class="n">multi_row</span><span class="p">,</span> <span class="n">multi_col</span><span class="p">,</span> <span class="n">catalogue</span><span class="p">,</span> <span class="n">len_cube</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
+         
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">overlap_smaller_than_remaining</span><span class="p">(</span><span class="n">number_of_boxes</span><span class="p">,</span> <span class="n">pixel_per_box</span><span class="p">,</span> 
+                                              <span class="n">remaining_pixels</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">overlapping</span><span class="p">,</span> 
+                                              <span class="n">multi_row</span><span class="p">,</span> <span class="n">multi_col</span><span class="p">,</span> <span class="n">catalogue</span><span class="p">,</span> <span class="n">len_cube</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span></div>
+
+
+
+
+ 
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

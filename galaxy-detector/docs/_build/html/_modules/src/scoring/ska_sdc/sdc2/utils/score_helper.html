@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.scoring.ska_sdc.sdc2.utils.score_helper &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../../index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../../index.html">Module code</a> &raquo;</li>
+      <li>src.scoring.ska_sdc.sdc2.utils.score_helper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.scoring.ska_sdc.sdc2.utils.score_helper</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+
+
+<div class="viewcode-block" id="get_pos_acc_series"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.sdc2.utils.html#src.scoring.ska_sdc.sdc2.utils.score_helper.get_pos_acc_series">[docs]</a><span class="k">def</span> <span class="nf">get_pos_acc_series</span><span class="p">(</span><span class="n">ra_s</span><span class="p">,</span> <span class="n">dec_s</span><span class="p">,</span> <span class="n">ra_t_s</span><span class="p">,</span> <span class="n">dec_t_s</span><span class="p">,</span> <span class="n">hi_size_t_s</span><span class="p">,</span> <span class="n">beam_size</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate positional accuracy series based on passed measured and truth values.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ra_s (pd.Series): Measured RA series.</span>
+<span class="sd">        dec_s (pd.Series): Measured Dec series.</span>
+<span class="sd">        ra_t_s (pd.Series): True RA series.</span>
+<span class="sd">        dec_t_s (pd.Series): True Dec series.</span>
+<span class="sd">        hi_size_t_s (pd.Series): True HI size series, to estimate source size.</span>
+<span class="sd">        beam_size (float): The primary beam size</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Calculate coordinate separation array</span>
+    <span class="n">coord_sub</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+        <span class="n">ra</span><span class="o">=</span><span class="n">ra_s</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="n">dec</span><span class="o">=</span><span class="n">dec_s</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;fk5&quot;</span><span class="p">,</span>
+        <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">coord_truth</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+        <span class="n">ra</span><span class="o">=</span><span class="n">ra_t_s</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="n">dec</span><span class="o">=</span><span class="n">dec_t_s</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;fk5&quot;</span><span class="p">,</span>
+        <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># This matches values from postprocessing</span>
+    <span class="n">sep_arr</span> <span class="o">=</span> <span class="n">coord_truth</span><span class="o">.</span><span class="n">separation</span><span class="p">(</span><span class="n">coord_sub</span><span class="p">)</span>
+
+    <span class="c1"># Estimate source size</span>
+    <span class="n">source_size_s</span> <span class="o">=</span> <span class="n">hi_size_t_s</span>
+
+    <span class="c1"># Calculate positional accuracy series</span>
+    <span class="c1"># TODO PH: Action needed? &#39;This also matches, if factor 4 is removed (calibration</span>
+    <span class="c1"># factor)&#39;</span>
+    <span class="n">pos_acc_s</span> <span class="o">=</span> <span class="n">sep_arr</span><span class="o">.</span><span class="n">arcsecond</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">beam_size</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">source_size_s</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pos_acc_s</span></div>
+
+
+<div class="viewcode-block" id="get_pa_acc_series"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.sdc2.utils.html#src.scoring.ska_sdc.sdc2.utils.score_helper.get_pa_acc_series">[docs]</a><span class="k">def</span> <span class="nf">get_pa_acc_series</span><span class="p">(</span><span class="n">pa_s</span><span class="p">,</span> <span class="n">pa_t_s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate position angle (PA) accuracy series based on measured and truth values,</span>
+<span class="sd">    after correcting for angle degeneracies.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pa_s (pd.Series): Measured PA series.</span>
+<span class="sd">        pa_t_s (pd.Series): True corresponding PA series.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Copy passed series to suppress SettingWithCopyWarnings</span>
+    <span class="n">pa_s_co</span> <span class="o">=</span> <span class="n">pa_s</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">pa_t_s_co</span> <span class="o">=</span> <span class="n">pa_t_s</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Correct for angle degeneracies</span>
+    <span class="c1"># (for HI, pa is between 0 and 360)</span>
+    <span class="n">deg2rad</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="mi">360</span>
+    <span class="n">pa_diff</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">pa_s_co</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">deg2rad</span><span class="p">)</span> <span class="o">-</span> <span class="n">pa_t_s_co</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">deg2rad</span><span class="p">)),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">pa_s_co</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">deg2rad</span><span class="p">)</span> <span class="o">-</span> <span class="n">pa_t_s_co</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">deg2rad</span><span class="p">)),</span>
+        <span class="p">)</span>
+        <span class="o">/</span> <span class="n">deg2rad</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">pa_diff</span></div>
+
+
+<div class="viewcode-block" id="get_position_scores"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.sdc2.utils.html#src.scoring.ska_sdc.sdc2.utils.score_helper.get_position_scores">[docs]</a><span class="k">def</span> <span class="nf">get_position_scores</span><span class="p">(</span><span class="n">pos_acc_series</span><span class="p">,</span> <span class="n">position_thr</span><span class="p">,</span> <span class="n">max_score</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the position scores;  calculate the score, weighted by the set position</span>
+<span class="sd">    threshold value.</span>
+
+<span class="sd">    The maximum score per source is SCORE_MAX</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        core_acc_series (pd.Series): Positional accuracy (core) series.</span>
+<span class="sd">        cent_acc_series (pd.Series): Positional accuracy (centroid) series.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">pos_acc_min_series</span> <span class="o">=</span> <span class="n">pos_acc_series</span>  <span class="c1">#  for now</span>
+
+    <span class="n">pos_score_frac_series</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_score</span> <span class="o">/</span> <span class="n">pos_acc_min_series</span><span class="p">)</span> <span class="o">*</span> <span class="n">position_thr</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">max_score</span><span class="p">,</span> <span class="n">pos_score_frac_series</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_pa_scores"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.sdc2.utils.html#src.scoring.ska_sdc.sdc2.utils.score_helper.get_pa_scores">[docs]</a><span class="k">def</span> <span class="nf">get_pa_scores</span><span class="p">(</span><span class="n">pa_acc_s</span><span class="p">,</span> <span class="n">pa_thr</span><span class="p">,</span> <span class="n">max_score</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the position angle scores; calculate the score, weighted by the set pa</span>
+<span class="sd">    threshold value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pa_acc_s (pd.Series): Position angle accuracy series.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">pa_acc_frac_series</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_score</span> <span class="o">/</span> <span class="n">pa_acc_s</span><span class="p">)</span> <span class="o">*</span> <span class="n">pa_thr</span>
+    <span class="n">scores_pa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">max_score</span><span class="p">,</span> <span class="n">pa_acc_frac_series</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">scores_pa</span></div>
+
+
+<div class="viewcode-block" id="get_i_scores"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.sdc2.utils.html#src.scoring.ska_sdc.sdc2.utils.score_helper.get_i_scores">[docs]</a><span class="k">def</span> <span class="nf">get_i_scores</span><span class="p">(</span><span class="n">i_acc_s</span><span class="p">,</span> <span class="n">i_thr</span><span class="p">,</span> <span class="n">max_score</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the inclination angle scores; calculate the score, weighted by the set i</span>
+<span class="sd">    threshold value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        i_acc_s (pd.Series): i accuracy series.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">i_acc_frac_series</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_score</span> <span class="o">/</span> <span class="n">i_acc_s</span><span class="p">)</span> <span class="o">*</span> <span class="n">i_thr</span>
+
+    <span class="n">scores_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">max_score</span><span class="p">,</span> <span class="n">i_acc_frac_series</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">scores_i</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

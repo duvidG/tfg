@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.scoring.ska_sdc.sdc1.sdc1_scorer &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+      <li>src.scoring.ska_sdc.sdc1.sdc1_scorer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.scoring.ska_sdc.sdc1.sdc1_scorer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.common.models.exceptions</span> <span class="kn">import</span> <span class="n">NoScoreException</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.common.utils.cat_io</span> <span class="kn">import</span> <span class="n">load_dataframe</span><span class="p">,</span> <span class="n">setup_logging</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc1.dc_defns</span> <span class="kn">import</span> <span class="n">CAT_COLUMNS</span><span class="p">,</span> <span class="n">MODE_CORE</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc1.utils.create_score</span> <span class="kn">import</span> <span class="n">create_sdc_score</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc1.utils.prep</span> <span class="kn">import</span> <span class="n">prepare_data</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc1.utils.sdc1_xmatch</span> <span class="kn">import</span> <span class="n">Sdc1XMatch</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc1.utils.sieve</span> <span class="kn">import</span> <span class="n">process_kdtree_cand_df</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc1.validate</span> <span class="kn">import</span> <span class="n">validate_df</span><span class="p">,</span> <span class="n">validate_freq</span>
+
+
+<div class="viewcode-block" id="Sdc1Scorer"><a class="viewcode-back" href="../../../../../src.scoring.ska_sdc.sdc1.html#src.scoring.ska_sdc.Sdc1Scorer">[docs]</a><span class="k">class</span> <span class="nc">Sdc1Scorer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The SDC1 scorer class.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sub_df (:obj:`pandas.DataFrame`): The submission catalogue</span>
+<span class="sd">            DataFrame of detected sources and properties</span>
+<span class="sd">        truth_path (:obj:`pandas.DataFrame`): The truth catalogue</span>
+<span class="sd">            DataFrame</span>
+<span class="sd">        freq (:obj:`int`): Image frequency band (560, 1400 or 9200 MHz)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub_df</span><span class="p">,</span> <span class="n">truth_df</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub_df</span> <span class="o">=</span> <span class="n">sub_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">truth_df</span> <span class="o">=</span> <span class="n">truth_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_score</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scoring_complete</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the resulting Sdc1Score object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`ska_sdc.sdc1.models.sdc1_score.Sdc1Score`: The calculated</span>
+<span class="sd">            SDC1 score object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="s2">&quot;No score calculated. Use the run method to calculate a score.&quot;</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NoScoreException</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_score</span>
+
+<div class="viewcode-block" id="Sdc1Scorer.from_txt"><a class="viewcode-back" href="../../../../../src.scoring.ska_sdc.sdc1.html#src.scoring.ska_sdc.Sdc1Scorer.from_txt">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_txt</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">sub_path</span><span class="p">,</span>
+        <span class="n">truth_path</span><span class="p">,</span>
+        <span class="n">freq</span><span class="p">,</span>
+        <span class="n">sub_skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">truth_skiprows</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an SDC1 scorer class from two source catalogues in text format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sub_path (:obj:`str`): The path of the submission catalogue of</span>
+<span class="sd">                detected sources and properties</span>
+<span class="sd">            truth_path (:obj:`str`): The path of the truth catalogue</span>
+<span class="sd">            freq (:obj:`int`): Image frequency band (560, 1400 or 9200 MHz)</span>
+<span class="sd">            sub_skiprows (:obj:`int`, optional): Number of rows to skip in</span>
+<span class="sd">                submission catalogue. Defaults to 1.</span>
+<span class="sd">            truth_skiprows (:obj:`int`, optional): Number of rows to skip in</span>
+<span class="sd">                truth catalogue. Defaults to 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">truth_df</span> <span class="o">=</span> <span class="n">load_dataframe</span><span class="p">(</span>
+            <span class="n">truth_path</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">CAT_COLUMNS</span><span class="p">,</span> <span class="n">skip_n</span><span class="o">=</span><span class="n">truth_skiprows</span>
+        <span class="p">)</span>
+        <span class="n">sub_df</span> <span class="o">=</span> <span class="n">load_dataframe</span><span class="p">(</span><span class="n">sub_path</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">CAT_COLUMNS</span><span class="p">,</span> <span class="n">skip_n</span><span class="o">=</span><span class="n">sub_skiprows</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">sub_df</span><span class="p">,</span> <span class="n">truth_df</span><span class="p">,</span> <span class="n">freq</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_create_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">detail</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute the scoring pipeline, according to the following steps:</span>
+
+<span class="sd">        #. prepare_data: Pre-process truth/submitted catalogues to unify</span>
+<span class="sd">        #. crossmatch_kdtree: Crossmatch sources between submission and truth</span>
+<span class="sd">        #  catalogues</span>
+<span class="sd">        #. process_kdtree_cand_df: Sieve and standardise crossmatch output</span>
+<span class="sd">        #. create_sdc_score: Generate the sdc_score object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">setup_logging</span><span class="p">()</span>
+        <span class="n">pipeline_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Scoring pipeline started&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Prepare data catalogues</span>
+        <span class="n">sub_df_prep</span> <span class="o">=</span> <span class="n">prepare_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sub_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="n">train</span><span class="p">)</span>
+        <span class="n">truth_df_prep</span> <span class="o">=</span> <span class="n">prepare_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">truth_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="n">train</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Catalogue preparation complete. Elapsed time: </span><span class="si">{:.2f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">pipeline_start</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Perform crossmatch to generate dataframe of candidate matches</span>
+        <span class="n">cand_sub_df</span> <span class="o">=</span> <span class="n">Sdc1XMatch</span><span class="p">(</span>
+            <span class="n">cat_sub</span><span class="o">=</span><span class="n">sub_df_prep</span><span class="p">,</span> <span class="n">cat_truth</span><span class="o">=</span><span class="n">truth_df_prep</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;crossmatch_kdtree&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Crossmatch runs complete. Elapsed time: </span><span class="si">{:.2f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">pipeline_start</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Sieve results and calculate score:</span>
+        <span class="n">sieved_sub_df</span> <span class="o">=</span> <span class="n">process_kdtree_cand_df</span><span class="p">(</span><span class="n">cand_sub_df</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Sieving complete. Elapsed time: </span><span class="si">{:.2f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">pipeline_start</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Construct sdc_score object:</span>
+        <span class="n">n_det</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_df_prep</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">sdc_score</span> <span class="o">=</span> <span class="n">create_sdc_score</span><span class="p">(</span>
+            <span class="n">sieved_sub_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="n">n_det</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">detail</span>
+        <span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Scoring pipeline complete. Elapsed time: </span><span class="si">{:.2f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">pipeline_start</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Final score: </span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sdc_score</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">sdc_score</span>
+
+    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate user input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">validate_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sub_df</span><span class="p">)</span>
+        <span class="n">validate_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">truth_df</span><span class="p">)</span>
+        <span class="n">validate_freq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Sdc1Scorer.run"><a class="viewcode-back" href="../../../../../src.scoring.ska_sdc.sdc1.html#src.scoring.ska_sdc.Sdc1Scorer.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">MODE_CORE</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the scoring pipeline.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mode (:obj:`int`, optional): 0 or 1 to use core or centroid</span>
+<span class="sd">                positions for scoring</span>
+<span class="sd">            train (:obj:`bool`, optional): If True, will only evaluate</span>
+<span class="sd">                score based on training area, else will exclude training</span>
+<span class="sd">                area</span>
+<span class="sd">            detail (:obj:`bool`, optional): If True, will return the</span>
+<span class="sd">                catalogue of matches and per source scores.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`ska_sdc.sdc1.models.sdc1_score.Sdc1Score`: The calculated</span>
+<span class="sd">                SDC1 score object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scoring_complete</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_score</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">detail</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scoring_complete</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_score</span></div>
+
+<div class="viewcode-block" id="Sdc1Scorer.is_scoring_complete"><a class="viewcode-back" href="../../../../../src.scoring.ska_sdc.sdc1.html#src.scoring.ska_sdc.Sdc1Scorer.is_scoring_complete">[docs]</a>    <span class="k">def</span> <span class="nf">is_scoring_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scoring_complete</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

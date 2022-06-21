@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.nn_model.models &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>src.nn_model.models</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.nn_model.models</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Fri May 27 19:00:25 2022</span>
+
+<span class="sd">@author: dgiron</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Activation</span>
+<span class="kn">from</span> <span class="nn">keras.layers.core</span> <span class="kn">import</span> <span class="n">Dropout</span>
+<span class="kn">from</span> <span class="nn">keras.layers.convolutional</span> <span class="kn">import</span> <span class="n">Conv2D</span><span class="p">,</span> <span class="n">Conv2DTranspose</span>
+<span class="kn">from</span> <span class="nn">keras.layers.pooling</span> <span class="kn">import</span> <span class="n">MaxPooling2D</span>
+<span class="kn">from</span> <span class="nn">keras.layers.merge</span> <span class="kn">import</span> <span class="n">concatenate</span>
+
+<span class="kn">from</span> <span class="nn">keras_unet_collection</span> <span class="kn">import</span> <span class="n">models</span> <span class="k">as</span> <span class="n">segmentation_models</span> <span class="c1"># https://github.com/yingkaisha/keras-unet-collection</span>
+
+
+
+<div class="viewcode-block" id="first_model"><a class="viewcode-back" href="../../../src.nn_model.html#src.nn_model.models.first_model">[docs]</a><span class="k">def</span> <span class="nf">first_model</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">n_filters</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">convolutional_block</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_filters</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dropout_prob</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_pooling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Layer of the contractive part of the model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        inputs : tf.model, optional</span>
+<span class="sd">            output from the previous layer. The default is None.</span>
+<span class="sd">        n_filters : int, optional</span>
+<span class="sd">            number of filters for the first layer. The default is 4.</span>
+<span class="sd">        dropout_prob : float, optional</span>
+<span class="sd">            a number bigger than zero activates the Dropout layer. Its use is recommended</span>
+<span class="sd">            to prevent overfitting. The default is 0.</span>
+<span class="sd">        max_pooling : bool, optional</span>
+<span class="sd">            if True  halves the dimensions at the end of the layer. The default is True.</span>
+<span class="sd">        iteration : int, optional</span>
+<span class="sd">            number of level. The kernel_size is almost four times bigger in the first two</span>
+<span class="sd">            layers than for the rest. The default is 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        next_layer : TYPE</span>
+<span class="sd">            DESCRIPTION.</span>
+<span class="sd">        skip_connection : TYPE</span>
+<span class="sd">            DESCRIPTION.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">ker_size</span> <span class="o">=</span> <span class="mi">11</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ker_size</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">conv</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="n">n_filters</span><span class="p">,</span> 
+                      <span class="n">kernel_size</span> <span class="o">=</span> <span class="n">ker_size</span><span class="p">,</span>
+                      <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+                      <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span>
+                      <span class="n">kernel_initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">HeNormal</span><span class="p">())(</span><span class="n">inputs</span><span class="p">)</span>
+        
+        <span class="n">conv</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="n">n_filters</span><span class="p">,</span> 
+                      <span class="n">kernel_size</span> <span class="o">=</span> <span class="n">ker_size</span><span class="p">,</span>
+                      <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+                      <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span>
+                      <span class="n">kernel_initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">HeNormal</span><span class="p">())(</span><span class="n">conv</span><span class="p">)</span>
+       
+    
+    
+        <span class="k">if</span> <span class="n">dropout_prob</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">conv</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_prob</span><span class="p">)(</span><span class="n">conv</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">max_pooling</span><span class="p">:</span>
+            <span class="n">next_layer</span> <span class="o">=</span> <span class="n">MaxPooling2D</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">)(</span><span class="n">conv</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">next_layer</span> <span class="o">=</span> <span class="n">conv</span>
+    
+        <span class="c1">#conv = BatchNormalization()(conv)</span>
+        <span class="n">skip_connection</span> <span class="o">=</span> <span class="n">conv</span>
+        
+        <span class="k">return</span> <span class="n">next_layer</span><span class="p">,</span> <span class="n">skip_connection</span>
+    
+    <span class="k">def</span> <span class="nf">upsampling_block</span><span class="p">(</span><span class="n">expansive_input</span><span class="p">,</span> <span class="n">contractive_input</span><span class="p">,</span> <span class="n">n_filters</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Layer of the expansive part of the network</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        expansive_input : tf.layer</span>
+<span class="sd">            output from the previous layer.</span>
+<span class="sd">        contractive_input : tf.layer</span>
+<span class="sd">            output from the opposite layer, in the contractive part.</span>
+<span class="sd">        n_filters : int, optional</span>
+<span class="sd">            number of filters for the last layer. The default is 4.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        conv : TYPE</span>
+<span class="sd">            DESCRIPTION.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+            
+        <span class="n">up</span> <span class="o">=</span> <span class="n">Conv2DTranspose</span><span class="p">(</span>
+                     <span class="n">n_filters</span><span class="p">,</span>  
+                     <span class="n">kernel_size</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+                     <span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>
+                     <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">)(</span><span class="n">expansive_input</span><span class="p">)</span>
+        
+        <span class="n">merge</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">([</span><span class="n">up</span><span class="p">,</span> <span class="n">contractive_input</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">conv</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="n">n_filters</span><span class="p">,</span>  
+                     <span class="n">kernel_size</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>   
+                     <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+                     <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span>
+                     <span class="n">kernel_initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">HeNormal</span><span class="p">())(</span><span class="n">merge</span><span class="p">)</span>
+        <span class="n">conv</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="n">n_filters</span><span class="p">,</span>  
+                     <span class="n">kernel_size</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>  
+                     <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+                     <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span>
+                     <span class="n">kernel_initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">HeNormal</span><span class="p">())(</span><span class="n">conv</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">conv</span>
+    
+    
+    
+    <span class="k">def</span> <span class="nf">unet_model</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">n_filters</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        U-net model constructed from &#39;scratch&#39;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_size : tuple</span>
+<span class="sd">            size of the images, consisting in three elements (2xregular size + 3rd dimension) For example,</span>
+<span class="sd">            a RGB would have 3 as the third dimension. On the other hand, a gray-scale image would have 1.</span>
+<span class="sd">        n_filters : int, optional</span>
+<span class="sd">            number of filters for the first layer. The default is 4.</span>
+<span class="sd">        n_classes : TYPE, optional</span>
+<span class="sd">            total number of labels. The default is 3.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        model : tensorflow.model</span>
+<span class="sd">            final model.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+    
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">input_size</span><span class="p">)</span>
+        <span class="c1"># tf.keras.layers.Rescaling(1/maximo, offset=0.0)</span>
+
+        
+        <span class="c1">#contracting path</span>
+        <span class="n">cblock1</span> <span class="o">=</span> <span class="n">convolutional_block</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">n_filters</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cblock2</span> <span class="o">=</span> <span class="n">convolutional_block</span><span class="p">(</span><span class="n">cblock1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="o">*</span><span class="n">n_filters</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">cblock3</span> <span class="o">=</span> <span class="n">convolutional_block</span><span class="p">(</span><span class="n">cblock2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="o">*</span><span class="n">n_filters</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">cblock4</span> <span class="o">=</span> <span class="n">convolutional_block</span><span class="p">(</span><span class="n">cblock3</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">8</span><span class="o">*</span><span class="n">n_filters</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dropout_prob</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span> 
+        <span class="n">cblock5</span> <span class="o">=</span> <span class="n">convolutional_block</span><span class="p">(</span><span class="n">cblock4</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">16</span><span class="o">*</span><span class="n">n_filters</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">dropout_prob</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">max_pooling</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>     
+        
+        <span class="c1">#expanding path</span>
+        <span class="n">ublock6</span> <span class="o">=</span> <span class="n">upsampling_block</span><span class="p">(</span><span class="n">cblock5</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cblock4</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="mi">8</span> <span class="o">*</span> <span class="n">n_filters</span><span class="p">)</span>
+        <span class="n">ublock7</span> <span class="o">=</span> <span class="n">upsampling_block</span><span class="p">(</span><span class="n">ublock6</span><span class="p">,</span> <span class="n">cblock3</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="n">n_filters</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">ublock8</span> <span class="o">=</span> <span class="n">upsampling_block</span><span class="p">(</span><span class="n">ublock7</span><span class="p">,</span> <span class="n">cblock2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">,</span> <span class="n">n_filters</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">ublock9</span> <span class="o">=</span> <span class="n">upsampling_block</span><span class="p">(</span><span class="n">ublock8</span><span class="p">,</span> <span class="n">cblock1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="n">n_filters</span><span class="p">)</span>
+    
+        <span class="n">conv9</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="n">n_classes</span><span class="p">,</span>
+                       <span class="mi">1</span><span class="p">,</span>
+                       <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+                       <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span>
+                       <span class="n">kernel_initializer</span><span class="o">=</span><span class="s1">&#39;he_normal&#39;</span><span class="p">)(</span><span class="n">ublock9</span><span class="p">)</span>
+        
+        <span class="c1">#conv10 = Conv2D(n_classes, kernel_size=1, padding=&#39;same&#39;, activation = &#39;softmax&#39;)(conv9) </span>
+        <span class="n">conv10</span> <span class="o">=</span> <span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;softmax&#39;</span><span class="p">)(</span><span class="n">conv9</span><span class="p">)</span>
+    
+        <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">conv10</span><span class="p">)</span>
+    
+        <span class="k">return</span> <span class="n">model</span>
+    
+    <span class="k">return</span> <span class="n">unet_model</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">n_filters</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># #def first_model(input_size, n_filters, n_classes):</span>
+<span class="c1">#     def convolutional_block(inputs=None, n_filters=4, dropout_prob=0, max_pooling=True):</span>
+<span class="c1">#         conv = Conv2D(n_filters, </span>
+<span class="c1">#                       kernel_size = 3,</span>
+<span class="c1">#                       activation=&#39;relu&#39;,</span>
+<span class="c1">#                       padding=&#39;same&#39;,</span>
+<span class="c1">#                       kernel_initializer=tf.keras.initializers.HeNormal())(inputs)</span>
+        
+<span class="c1">#         conv = Conv2D(n_filters, </span>
+<span class="c1">#                       kernel_size = 3,</span>
+<span class="c1">#                       activation=&#39;relu&#39;,</span>
+<span class="c1">#                       padding=&#39;same&#39;,</span>
+<span class="c1">#                       kernel_initializer=tf.keras.initializers.HeNormal())(conv)</span>
+       
+    
+    
+<span class="c1">#         if dropout_prob &gt; 0:</span>
+<span class="c1">#             conv = Dropout(dropout_prob)(conv)</span>
+            
+<span class="c1">#         if max_pooling:</span>
+<span class="c1">#             next_layer = MaxPooling2D((2, 2), padding=&#39;same&#39;)(conv)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             next_layer = conv</span>
+    
+<span class="c1">#         #conv = BatchNormalization()(conv)</span>
+<span class="c1">#         skip_connection = conv</span>
+        
+<span class="c1">#         return next_layer, skip_connection</span>
+    
+<span class="c1">#     def upsampling_block(expansive_input, contractive_input, n_filters=4):</span>
+            
+<span class="c1">#         up = Conv2DTranspose(</span>
+<span class="c1">#                      n_filters,  </span>
+<span class="c1">#                      kernel_size = 3,</span>
+<span class="c1">#                      strides=(2,2),</span>
+<span class="c1">#                      padding=&#39;same&#39;)(expansive_input)</span>
+        
+<span class="c1">#         merge = concatenate([up, contractive_input], axis=3)</span>
+<span class="c1">#         conv = Conv2D(n_filters,  </span>
+<span class="c1">#                      kernel_size = 3,   </span>
+<span class="c1">#                      activation=&#39;relu&#39;,</span>
+<span class="c1">#                      padding=&#39;same&#39;,</span>
+<span class="c1">#                      kernel_initializer=tf.keras.initializers.HeNormal())(merge)</span>
+<span class="c1">#         conv = Conv2D(n_filters,  </span>
+<span class="c1">#                      kernel_size = 3,  </span>
+<span class="c1">#                      activation=&#39;relu&#39;,</span>
+<span class="c1">#                      padding=&#39;same&#39;,</span>
+<span class="c1">#                      kernel_initializer=tf.keras.initializers.HeNormal())(conv)</span>
+        
+<span class="c1">#         return conv</span>
+    
+    
+    
+<span class="c1">#     def unet_model(input_size, n_filters=4, n_classes=3):</span>
+    
+<span class="c1">#         inputs = Input(input_size)</span>
+        
+<span class="c1">#         #contracting path</span>
+<span class="c1">#         cblock1 = convolutional_block(inputs, n_filters)</span>
+<span class="c1">#         cblock2 = convolutional_block(cblock1[0], 2*n_filters)</span>
+<span class="c1">#         cblock3 = convolutional_block(cblock2[0], 4*n_filters)</span>
+<span class="c1">#         cblock4 = convolutional_block(cblock3[0], 8*n_filters, dropout_prob=0.2) </span>
+<span class="c1">#         cblock5 = convolutional_block(cblock4[0],16*n_filters, dropout_prob=0.2, max_pooling=None)     </span>
+        
+<span class="c1">#         #expanding path</span>
+<span class="c1">#         ublock6 = upsampling_block(cblock5[0], cblock4[1],  8 * n_filters)</span>
+<span class="c1">#         ublock7 = upsampling_block(ublock6, cblock3[1],  n_filters*4)</span>
+<span class="c1">#         ublock8 = upsampling_block(ublock7, cblock2[1] , n_filters*2)</span>
+<span class="c1">#         ublock9 = upsampling_block(ublock8, cblock1[1],  n_filters)</span>
+    
+<span class="c1">#         conv9 = Conv2D(n_classes,</span>
+<span class="c1">#                        1,</span>
+<span class="c1">#                        activation=&#39;relu&#39;,</span>
+<span class="c1">#                        padding=&#39;same&#39;,</span>
+<span class="c1">#                        kernel_initializer=&#39;he_normal&#39;)(ublock9)</span>
+        
+<span class="c1">#         #conv10 = Conv2D(n_classes, kernel_size=1, padding=&#39;same&#39;, activation = &#39;softmax&#39;)(conv9) </span>
+<span class="c1">#         conv10 = Activation(&#39;softmax&#39;)(conv9)</span>
+    
+<span class="c1">#         model = tf.keras.Model(inputs=inputs, outputs=conv10)</span>
+    
+<span class="c1">#         return model</span>
+    
+<span class="c1">#     return unet_model(input_size, n_filters, n_classes)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

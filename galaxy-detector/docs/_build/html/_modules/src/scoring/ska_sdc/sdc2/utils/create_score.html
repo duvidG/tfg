@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.scoring.ska_sdc.sdc2.utils.create_score &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../../index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../../index.html">Module code</a> &raquo;</li>
+      <li>src.scoring.ska_sdc.sdc2.utils.create_score</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.scoring.ska_sdc.sdc2.utils.create_score</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.common.utils.score_helper</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">count_match_cat_rej</span><span class="p">,</span>
+    <span class="n">get_acc_series</span><span class="p">,</span>
+    <span class="n">get_match_cat_acc</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc2.models.sdc2_score</span> <span class="kn">import</span> <span class="n">Sdc2Score</span>
+<span class="kn">from</span> <span class="nn">src.scoring.ska_sdc.sdc2.utils.score_helper</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_i_scores</span><span class="p">,</span>
+    <span class="n">get_pa_acc_series</span><span class="p">,</span>
+    <span class="n">get_pa_scores</span><span class="p">,</span>
+    <span class="n">get_pos_acc_series</span><span class="p">,</span>
+    <span class="n">get_position_scores</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="create_sdc_score"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.sdc2.utils.html#src.scoring.ska_sdc.sdc2.utils.create_score.create_sdc_score">[docs]</a><span class="k">def</span> <span class="nf">create_sdc_score</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">sieved_sub_df</span><span class="p">,</span> <span class="n">n_det</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">detail</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Complete the scoring pipeline using the data generated by the previous steps.</span>
+<span class="sd">    This requires the prepared truth and submission catalogues, and the candidate</span>
+<span class="sd">    match catalogues created from the crossmatch step.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sieved_sub_df (:obj:`pandas.DataFrame`): The processed and sieved candidate</span>
+<span class="sd">            match catalogue between submission and truth.</span>
+<span class="sd">        n_det (:obj:`int`): Total number of detected sources.</span>
+<span class="sd">        train (:obj:`bool`): Whether the score is determined based on training area only</span>
+<span class="sd">        detail (:obj:`bool`): If True, will include the detailed score and match data</span>
+<span class="sd">            with the returned Sdc2Score object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Instantiate Score object:</span>
+    <span class="n">sdc_score</span> <span class="o">=</span> <span class="n">Sdc2Score</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">detail</span><span class="p">)</span>
+
+    <span class="c1"># Reject matches from cross matched catalogues that lie above the multid_thr.</span>
+    <span class="c1"># Count them for the report.</span>
+    <span class="n">match_sub_df</span> <span class="o">=</span> <span class="n">get_match_cat_acc</span><span class="p">(</span>
+        <span class="n">sieved_sub_df</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;multid_thr&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">n_rej</span> <span class="o">=</span> <span class="n">count_match_cat_rej</span><span class="p">(</span>
+        <span class="n">sieved_sub_df</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;multid_thr&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Add the match_df to the sdc_score for detailed feedback</span>
+    <span class="n">sdc_score</span><span class="o">.</span><span class="n">match_df</span> <span class="o">=</span> <span class="n">match_sub_df</span>
+
+    <span class="c1"># Compute final score</span>
+    <span class="n">sdc_score</span> <span class="o">=</span> <span class="n">compute_score_value</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">sdc_score</span><span class="p">,</span> <span class="n">match_sub_df</span><span class="p">,</span> <span class="n">n_det</span><span class="p">,</span> <span class="n">n_rej</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sdc_score</span></div>
+
+
+<div class="viewcode-block" id="compute_score_value"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.sdc2.utils.html#src.scoring.ska_sdc.sdc2.utils.create_score.compute_score_value">[docs]</a><span class="k">def</span> <span class="nf">compute_score_value</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">sdc_score</span><span class="p">,</span> <span class="n">match_sub_df</span><span class="p">,</span> <span class="n">n_det</span><span class="p">,</span> <span class="n">n_rej</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the per-match accuracy and generate the final score report.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (:obj:`configparser.ConfigParser`): SDC2 scorer config</span>
+<span class="sd">        sdc_score (:class:`ska_sdc.sdc2.models.sdc2_score.Sdc2Score`): The SDC2</span>
+<span class="sd">            score object to populate</span>
+<span class="sd">        match_sub_df (:obj:`pandas.DataFrame`): The sieved matches that are below the</span>
+<span class="sd">            multi_d threshold</span>
+<span class="sd">        n_det (:obj:`int`): The total number of detected sources in the submission</span>
+<span class="sd">        n_rej (:obj:`int`): Number of candidate matches rejected on the basis of multi_d</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Max score</span>
+    <span class="n">max_score</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="s2">&quot;max_score&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Number of matches below multi_d_err threshold</span>
+    <span class="n">n_match</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">match_sub_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n_match</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># No matches found; nothing else to do</span>
+        <span class="c1"># This currently returns zero, rather than</span>
+        <span class="c1"># score_sum - float(n_det - n_match)</span>
+
+        <span class="n">sdc_score</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">-</span> <span class="n">n_det</span>
+        <span class="n">sdc_score</span><span class="o">.</span><span class="n">n_det</span> <span class="o">=</span> <span class="n">n_det</span>
+        <span class="n">sdc_score</span><span class="o">.</span><span class="n">n_bad</span> <span class="o">=</span> <span class="n">n_rej</span>
+        <span class="n">sdc_score</span><span class="o">.</span><span class="n">n_match</span> <span class="o">=</span> <span class="n">n_match</span>
+        <span class="n">sdc_score</span><span class="o">.</span><span class="n">n_false</span> <span class="o">=</span> <span class="n">n_det</span> <span class="o">-</span> <span class="n">n_match</span>
+        <span class="n">sdc_score</span><span class="o">.</span><span class="n">score_det</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">sdc_score</span><span class="o">.</span><span class="n">acc_pc</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">sdc_score</span><span class="o">.</span><span class="n">scores_df</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">sdc_score</span>
+
+    <span class="c1"># Compute accuracy for position</span>
+    <span class="n">pos_acc_series</span> <span class="o">=</span> <span class="n">get_pos_acc_series</span><span class="p">(</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">],</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">],</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;ra_t&quot;</span><span class="p">],</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;dec_t&quot;</span><span class="p">],</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;hi_size_t&quot;</span><span class="p">],</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s2">&quot;cube&quot;</span><span class="p">,</span> <span class="s2">&quot;beam_size&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Compute accuracy for central frequency</span>
+    <span class="n">central_freq_acc_series</span> <span class="o">=</span> <span class="n">get_acc_series</span><span class="p">(</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;central_freq&quot;</span><span class="p">],</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;central_freq_t&quot;</span><span class="p">],</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;spectral_size_t&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Compute accuracy of total flux measurement</span>
+    <span class="n">flux_acc_series</span> <span class="o">=</span> <span class="n">get_acc_series</span><span class="p">(</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;line_flux_integral&quot;</span><span class="p">],</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;line_flux_integral_t&quot;</span><span class="p">],</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;line_flux_integral_t&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Compute accuracy of size estimate (ew_HI_size_arcsec)</span>
+    <span class="n">size_acc_series</span> <span class="o">=</span> <span class="n">get_acc_series</span><span class="p">(</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;hi_size&quot;</span><span class="p">],</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;hi_size_t&quot;</span><span class="p">],</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;hi_size_t&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Compute accuracy of position angle</span>
+    <span class="n">pa_acc_series</span> <span class="o">=</span> <span class="n">get_pa_acc_series</span><span class="p">(</span><span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;pa&quot;</span><span class="p">],</span> <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;pa_t&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Compute accuracy of w_20</span>
+    <span class="n">w20_acc_series</span> <span class="o">=</span> <span class="n">get_acc_series</span><span class="p">(</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;w20&quot;</span><span class="p">],</span> <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;w20_t&quot;</span><span class="p">],</span> <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;w20_t&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Compute accuracy of i</span>
+    <span class="n">i_acc_series</span> <span class="o">=</span> <span class="n">get_acc_series</span><span class="p">(</span><span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;i&quot;</span><span class="p">],</span> <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;i_t&quot;</span><span class="p">],</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># Log per-source scores in a new DataFrame</span>
+    <span class="n">scores_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+    <span class="c1"># Position scores</span>
+    <span class="n">scores_df</span><span class="p">[</span><span class="s2">&quot;position&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_position_scores</span><span class="p">(</span>
+        <span class="n">pos_acc_series</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;position_thr&quot;</span><span class="p">),</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="s2">&quot;max_score&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Central_freq scores</span>
+    <span class="n">central_freq_acc_frac_series</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">max_score</span> <span class="o">/</span> <span class="n">central_freq_acc_series</span>
+    <span class="p">)</span> <span class="o">*</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;central_freq_thr&quot;</span><span class="p">)</span>
+    <span class="n">scores_df</span><span class="p">[</span><span class="s2">&quot;central_freq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">max_score</span><span class="p">,</span> <span class="n">central_freq_acc_frac_series</span><span class="p">)</span>
+
+    <span class="c1"># Flux scores</span>
+    <span class="n">flux_acc_frac_series</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_score</span> <span class="o">/</span> <span class="n">flux_acc_series</span><span class="p">)</span> <span class="o">*</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span>
+        <span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;flux_thr&quot;</span>
+    <span class="p">)</span>
+    <span class="n">scores_df</span><span class="p">[</span><span class="s2">&quot;flux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">max_score</span><span class="p">,</span> <span class="n">flux_acc_frac_series</span><span class="p">)</span>
+
+    <span class="c1"># Major axis size scores</span>
+    <span class="n">size_acc_frac_series</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_score</span> <span class="o">/</span> <span class="n">size_acc_series</span><span class="p">)</span> <span class="o">*</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span>
+        <span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;size_thr&quot;</span>
+    <span class="p">)</span>
+    <span class="n">scores_df</span><span class="p">[</span><span class="s2">&quot;hi_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">max_score</span><span class="p">,</span> <span class="n">size_acc_frac_series</span><span class="p">)</span>
+
+    <span class="c1"># Position angle scores</span>
+    <span class="n">scores_df</span><span class="p">[</span><span class="s2">&quot;pa&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_pa_scores</span><span class="p">(</span>
+        <span class="n">pa_acc_series</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;pa_thr&quot;</span><span class="p">),</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="s2">&quot;max_score&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># w20 scores</span>
+    <span class="n">w20_acc_frac_series</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_score</span> <span class="o">/</span> <span class="n">w20_acc_series</span><span class="p">)</span> <span class="o">*</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span>
+        <span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;w20_thr&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">scores_df</span><span class="p">[</span><span class="s2">&quot;w20&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">max_score</span><span class="p">,</span> <span class="n">w20_acc_frac_series</span><span class="p">)</span>
+
+    <span class="c1"># i scores</span>
+    <span class="n">scores_df</span><span class="p">[</span><span class="s2">&quot;i&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_i_scores</span><span class="p">(</span>
+        <span class="n">i_acc_series</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;i_thr&quot;</span><span class="p">),</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="s2">&quot;max_score&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Weight scores so maximum score per source is max_score</span>
+
+    <span class="n">column_acc_pc</span> <span class="o">=</span> <span class="n">scores_df</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">n_match</span><span class="p">)</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">max_score</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">scores_df_weighted</span> <span class="o">=</span> <span class="n">scores_df</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+
+    <span class="n">score_sum_per_sub_source</span> <span class="o">=</span> <span class="n">scores_df_weighted</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Weight scores by n_dup</span>
+    <span class="n">scores_sum_per_sub_source_weighted</span> <span class="o">=</span> <span class="n">score_sum_per_sub_source</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
+        <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;n_dup&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="p">)</span>
+    <span class="n">score_sum</span> <span class="o">=</span> <span class="n">scores_sum_per_sub_source_weighted</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">score_final</span> <span class="o">=</span> <span class="n">score_sum</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_det</span> <span class="o">-</span> <span class="n">n_match</span><span class="p">)</span>
+
+    <span class="c1"># Add ID column to scores_df to provide detailed feedback</span>
+    <span class="n">scores_df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">match_sub_df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Write data to sdc_score</span>
+    <span class="n">sdc_score</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">score_final</span>
+    <span class="n">sdc_score</span><span class="o">.</span><span class="n">n_det</span> <span class="o">=</span> <span class="n">n_det</span>
+    <span class="n">sdc_score</span><span class="o">.</span><span class="n">n_bad</span> <span class="o">=</span> <span class="n">n_rej</span>
+    <span class="n">sdc_score</span><span class="o">.</span><span class="n">n_match</span> <span class="o">=</span> <span class="n">n_match</span>
+    <span class="n">sdc_score</span><span class="o">.</span><span class="n">n_false</span> <span class="o">=</span> <span class="n">n_det</span> <span class="o">-</span> <span class="n">n_match</span>
+    <span class="n">sdc_score</span><span class="o">.</span><span class="n">score_det</span> <span class="o">=</span> <span class="n">score_sum</span>
+    <span class="n">sdc_score</span><span class="o">.</span><span class="n">acc_pc</span> <span class="o">=</span> <span class="n">score_sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_match</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span>
+    <span class="n">sdc_score</span><span class="o">.</span><span class="n">column_acc_pc</span> <span class="o">=</span> <span class="n">column_acc_pc</span>
+    <span class="n">sdc_score</span><span class="o">.</span><span class="n">scores_df</span> <span class="o">=</span> <span class="n">scores_df</span>
+
+    <span class="k">return</span> <span class="n">sdc_score</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

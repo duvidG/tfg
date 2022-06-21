@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.scoring.ska_sdc.common.utils.xmatch &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../../index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../../index.html">Module code</a> &raquo;</li>
+      <li>src.scoring.ska_sdc.common.utils.xmatch</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.scoring.ska_sdc.common.utils.xmatch</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="XMatch"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.common.utils.html#src.scoring.ska_sdc.common.utils.xmatch.XMatch">[docs]</a><span class="k">class</span> <span class="nc">XMatch</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Crossmatch sources.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            cat_sub:class (:`pandas.DataFrame`): Submission catalogue.</span>
+<span class="sd">            cat_truth (:class:`pandas.DataFrame`): Truth catalogue.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_stub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A stub crossmatching function.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`pandas.DataFrame`: Crossmatched catalogue.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+<div class="viewcode-block" id="XMatch.execute"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.common.utils.html#src.scoring.ska_sdc.common.utils.xmatch.XMatch.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_stub&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="n">exec_func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
+        <span class="n">cat_rtn</span> <span class="o">=</span> <span class="n">exec_func</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;[</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">] complete in </span><span class="si">{:.2f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">cat_rtn</span></div></div>
+
+
+<div class="viewcode-block" id="KDTreeXMatch"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.common.utils.html#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch">[docs]</a><span class="k">class</span> <span class="nc">KDTreeXMatch</span><span class="p">(</span><span class="n">XMatch</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for KDTree-based XMatch processes.</span>
+
+<span class="sd">    These will query for candidate matches within a defined radius of a set of points</span>
+<span class="sd">    in an N-D space.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="KDTreeXMatch.get_all_col"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.common.utils.html#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_all_col">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_all_col</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Must be overridden by subclasses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Not Implemented&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KDTreeXMatch.get_kdtree"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.common.utils.html#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_kdtree">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_kdtree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Must be overridden by subclasses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Not Implemented&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KDTreeXMatch.get_radius_arr"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.common.utils.html#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_radius_arr">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_radius_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Must be overridden by subclasses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Not Implemented&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KDTreeXMatch.get_query_coords"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.common.utils.html#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_query_coords">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_query_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Must be overridden by subclasses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Not Implemented&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KDTreeXMatch.refine_match_df"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.common.utils.html#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.refine_match_df">[docs]</a>    <span class="k">def</span> <span class="nf">refine_match_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cand_match_df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Can be overridden by subclasses to perform any minor post-xmatch refinement of</span>
+<span class="sd">        the candidate match DataFrame.</span>
+
+<span class="sd">        This may include renaming columns, changing the index, etc. - more extensive</span>
+<span class="sd">        operations should be separated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cand_match_df</span></div>
+
+<div class="viewcode-block" id="KDTreeXMatch.get_truth_suffix"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.common.utils.html#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_truth_suffix">[docs]</a>    <span class="k">def</span> <span class="nf">get_truth_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the suffix label to be added to columns corresponding to truth properties.</span>
+
+<span class="sd">        Can be overridden by subclasses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;_t&quot;</span></div>
+
+<div class="viewcode-block" id="KDTreeXMatch.crossmatch_kdtree"><a class="viewcode-back" href="../../../../../../src.scoring.ska_sdc.common.utils.html#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.crossmatch_kdtree">[docs]</a>    <span class="k">def</span> <span class="nf">crossmatch_kdtree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Query for all submitted sources within a defined radius of the truth catalogue.</span>
+
+<span class="sd">        Uses subclass-overridden methods to construct the KDTree, radius array and query</span>
+<span class="sd">        arrays. Subclass must also define the columns to be written to the output</span>
+<span class="sd">        catalogue.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`pandas.DataFrame`: The candidate match catalogue.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_col</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cat_truth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat_truth</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cat_sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat_sub</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">truth_val_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">sub_val_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">match_truth_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">match_sub_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># For performance, unpack dataframes into arrays of values</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">all_col</span><span class="p">:</span>
+            <span class="n">truth_val_map</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat_truth</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">sub_val_map</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat_sub</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">all_col</span><span class="p">:</span>
+            <span class="n">match_truth_map</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">match_sub_map</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">sub_coord_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_query_coords</span><span class="p">()</span>
+        <span class="n">size_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_radius_arr</span><span class="p">()</span>
+        <span class="n">point_kdtree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_kdtree</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_coord_arr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">sub_index</span><span class="p">,</span> <span class="p">(</span><span class="n">_center</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="n">sub_coord_arr</span><span class="p">,</span> <span class="n">point_kdtree</span><span class="o">.</span><span class="n">query_radius</span><span class="p">(</span><span class="n">sub_coord_arr</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">size_arr</span><span class="p">))</span>
+            <span class="p">):</span>
+                <span class="k">for</span> <span class="n">match_index</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">all_col</span><span class="p">:</span>
+                        <span class="n">match_sub_map</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_val_map</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="n">sub_index</span><span class="p">])</span>
+                        <span class="n">match_truth_map</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">truth_val_map</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="n">match_index</span><span class="p">])</span>
+
+        <span class="c1"># Construct final candidate match DF:</span>
+        <span class="n">truth_suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_truth_suffix</span><span class="p">()</span>
+        <span class="n">match_df_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">all_col</span><span class="p">:</span>
+            <span class="n">match_df_data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">match_sub_map</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">all_col</span><span class="p">:</span>
+            <span class="n">match_df_data</span><span class="p">[</span><span class="n">col</span> <span class="o">+</span> <span class="n">truth_suffix</span><span class="p">]</span> <span class="o">=</span> <span class="n">match_truth_map</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+
+        <span class="n">cand_match_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">refine_match_df</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">match_df_data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">cand_match_df</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
