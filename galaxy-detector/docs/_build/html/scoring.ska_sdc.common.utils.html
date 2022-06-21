@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scoring.ska_sdc.common.utils package &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>scoring.ska_sdc.common.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/scoring.ska_sdc.common.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scoring-ska-sdc-common-utils-package">
+<h1>scoring.ska_sdc.common.utils package<a class="headerlink" href="#scoring-ska-sdc-common-utils-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-src.scoring.ska_sdc.common.utils.cat_io">
+<span id="scoring-ska-sdc-common-utils-cat-io-module"></span><h2>scoring.ska_sdc.common.utils.cat_io module<a class="headerlink" href="#module-src.scoring.ska_sdc.common.utils.cat_io" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.cat_io.load_dataframe">
+<span class="sig-prename descclassname"><span class="pre">src.scoring.ska_sdc.common.utils.cat_io.</span></span><span class="sig-name descname"><span class="pre">load_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cat_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/cat_io.html#load_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.cat_io.load_dataframe" title="Permalink to this definition"></a></dt>
+<dd><p>Load the catalogue specified by the input path into memory as a pd.DataFrame.</p>
+<p>Drop rows containing NaN values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cat_path</strong> (<em>str</em>) – File path of csv catalogue</p></li>
+<li><p><strong>skip_n</strong> (<em>int</em><em>) </em><em>(</em><em>opt</em>) – Number of lines to skip when reading catalogue</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.cat_io.setup_logging">
+<span class="sig-prename descclassname"><span class="pre">src.scoring.ska_sdc.common.utils.cat_io.</span></span><span class="sig-name descname"><span class="pre">setup_logging</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/cat_io.html#setup_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.cat_io.setup_logging" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-src.scoring.ska_sdc.common.utils.constants">
+<span id="scoring-ska-sdc-common-utils-constants-module"></span><h2>scoring.ska_sdc.common.utils.constants module<a class="headerlink" href="#module-src.scoring.ska_sdc.common.utils.constants" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-src.scoring.ska_sdc.common.utils.score_helper">
+<span id="scoring-ska-sdc-common-utils-score-helper-module"></span><h2>scoring.ska_sdc.common.utils.score_helper module<a class="headerlink" href="#module-src.scoring.ska_sdc.common.utils.score_helper" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.score_helper.count_match_cat_rej">
+<span class="sig-prename descclassname"><span class="pre">src.scoring.ska_sdc.common.utils.score_helper.</span></span><span class="sig-name descname"><span class="pre">count_match_cat_rej</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multid_thr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/score_helper.html#count_match_cat_rej"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.score_helper.count_match_cat_rej" title="Permalink to this definition"></a></dt>
+<dd><p>Count the number of matches in match_df with a multi_d_err above threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>match_df</strong> (<em>pd.DataFrame</em>) – Candidate match DataFrame with calculated multi_d_err
+column which will be used to accept/reject</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.score_helper.get_acc_series">
+<span class="sig-prename descclassname"><span class="pre">src.scoring.ska_sdc.common.utils.score_helper.</span></span><span class="sig-name descname"><span class="pre">get_acc_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sub_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaling</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/score_helper.html#get_acc_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.score_helper.get_acc_series" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate a generic accuracy series based on passed measured and truth values
+according to:</p>
+<blockquote>
+<div><p>acc_s = abs(sub_s - truth_s) / scaling</p>
+</div></blockquote>
+<p>Scaling can either be a scalar or an iterable of the same length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sub_s</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.Series</span></code>) – Submitted (measured) value series.</p></li>
+<li><p><strong>truth_s</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.Series</span></code>) – True value series.</p></li>
+<li><p><strong>scaling</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.Series</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">float64</span></code>) – Scaling factor(s)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.score_helper.get_match_cat_acc">
+<span class="sig-prename descclassname"><span class="pre">src.scoring.ska_sdc.common.utils.score_helper.</span></span><span class="sig-name descname"><span class="pre">get_match_cat_acc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multid_thr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/score_helper.html#get_match_cat_acc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.score_helper.get_match_cat_acc" title="Permalink to this definition"></a></dt>
+<dd><p>Given the passed match dataframe, split by the multi_d_err property around
+the multid_thr threshold value.</p>
+<p>Return the accepted matches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>match_df</strong> (<em>pd.DataFrame</em>) – Candidate match DataFrame with calculated multi_d_err
+column which will be used to accept/reject</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.scoring.ska_sdc.common.utils.xmatch">
+<span id="scoring-ska-sdc-common-utils-xmatch-module"></span><h2>scoring.ska_sdc.common.utils.xmatch module<a class="headerlink" href="#module-src.scoring.ska_sdc.common.utils.xmatch" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.scoring.ska_sdc.common.utils.xmatch.</span></span><span class="sig-name descname"><span class="pre">KDTreeXMatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/xmatch.html#KDTreeXMatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="src.scoring.ska_sdc.common.utils.html#src.scoring.ska_sdc.common.utils.xmatch.XMatch" title="src.scoring.ska_sdc.common.utils.xmatch.XMatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">XMatch</span></code></a></p>
+<p>Abstract base class for KDTree-based XMatch processes.</p>
+<p>These will query for candidate matches within a defined radius of a set of points
+in an N-D space.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.crossmatch_kdtree">
+<span class="sig-name descname"><span class="pre">crossmatch_kdtree</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/xmatch.html#KDTreeXMatch.crossmatch_kdtree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.crossmatch_kdtree" title="Permalink to this definition"></a></dt>
+<dd><p>Query for all submitted sources within a defined radius of the truth catalogue.</p>
+<p>Uses subclass-overridden methods to construct the KDTree, radius array and query
+arrays. Subclass must also define the columns to be written to the output
+catalogue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The candidate match catalogue.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_all_col">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_col</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/xmatch.html#KDTreeXMatch.get_all_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_all_col" title="Permalink to this definition"></a></dt>
+<dd><p>Must be overridden by subclasses</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_kdtree">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_kdtree</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/xmatch.html#KDTreeXMatch.get_kdtree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_kdtree" title="Permalink to this definition"></a></dt>
+<dd><p>Must be overridden by subclasses</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_query_coords">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_query_coords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/xmatch.html#KDTreeXMatch.get_query_coords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_query_coords" title="Permalink to this definition"></a></dt>
+<dd><p>Must be overridden by subclasses</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_radius_arr">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_radius_arr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/xmatch.html#KDTreeXMatch.get_radius_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_radius_arr" title="Permalink to this definition"></a></dt>
+<dd><p>Must be overridden by subclasses</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_truth_suffix">
+<span class="sig-name descname"><span class="pre">get_truth_suffix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/xmatch.html#KDTreeXMatch.get_truth_suffix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.get_truth_suffix" title="Permalink to this definition"></a></dt>
+<dd><p>Get the suffix label to be added to columns corresponding to truth properties.</p>
+<p>Can be overridden by subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.refine_match_df">
+<span class="sig-name descname"><span class="pre">refine_match_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand_match_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/xmatch.html#KDTreeXMatch.refine_match_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.xmatch.KDTreeXMatch.refine_match_df" title="Permalink to this definition"></a></dt>
+<dd><p>Can be overridden by subclasses to perform any minor post-xmatch refinement of
+the candidate match DataFrame.</p>
+<p>This may include renaming columns, changing the index, etc. - more extensive
+operations should be separated.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.xmatch.XMatch">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.scoring.ska_sdc.common.utils.xmatch.</span></span><span class="sig-name descname"><span class="pre">XMatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/xmatch.html#XMatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.xmatch.XMatch" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Crossmatch sources.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.common.utils.xmatch.XMatch.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_stub'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/common/utils/xmatch.html#XMatch.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.common.utils.xmatch.XMatch.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.scoring.ska_sdc.common.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.scoring.ska_sdc.common.utils" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scoring.ska_sdc.sdc2.models package &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>scoring.ska_sdc.sdc2.models package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/scoring.ska_sdc.sdc2.models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scoring-ska-sdc-sdc2-models-package">
+<h1>scoring.ska_sdc.sdc2.models package<a class="headerlink" href="#scoring-ska-sdc-sdc2-models-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-src.scoring.ska_sdc.sdc2.models.sdc2_score">
+<span id="scoring-ska-sdc-sdc2-models-sdc2-score-module"></span><h2>scoring.ska_sdc.sdc2.models.sdc2_score module<a class="headerlink" href="#module-src.scoring.ska_sdc.sdc2.models.sdc2_score" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.scoring.ska_sdc.sdc2.models.sdc2_score.</span></span><span class="sig-name descname"><span class="pre">Sdc2Score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detail</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/scoring/ska_sdc/sdc2/models/sdc2_score.html#Sdc2Score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="src.scoring.ska_sdc.common.models.html#src.scoring.ska_sdc.common.models.sdc_score.SdcScore" title="src.scoring.ska_sdc.common.models.sdc_score.SdcScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">SdcScore</span></code></a></p>
+<p>Simple data container class for collating data relating to an SDC2 score.</p>
+<p>This is created by the SDC2 Scorer’s run method.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.acc_pc">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">acc_pc</span></span><a class="headerlink" href="#src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.acc_pc" title="Permalink to this definition"></a></dt>
+<dd><p>The average score per match (%).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float64</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.detail">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">detail</span></span><a class="headerlink" href="#src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.detail" title="Permalink to this definition"></a></dt>
+<dd><p>If True, has returned the catalogue of matches and per source scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.match_df">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">match_df</span></span><a class="headerlink" href="#src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.match_df" title="Permalink to this definition"></a></dt>
+<dd><p>Dataframe of matched sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.n_bad">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_bad</span></span><a class="headerlink" href="#src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.n_bad" title="Permalink to this definition"></a></dt>
+<dd><p>Number of candidate matches rejected during data cleansing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.n_det">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_det</span></span><a class="headerlink" href="#src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.n_det" title="Permalink to this definition"></a></dt>
+<dd><p>The total number of detected sources in the submission.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.n_false">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_false</span></span><a class="headerlink" href="#src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.n_false" title="Permalink to this definition"></a></dt>
+<dd><p>Number of false detections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.n_match">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_match</span></span><a class="headerlink" href="#src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.n_match" title="Permalink to this definition"></a></dt>
+<dd><p>Number of candidate matches below threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.score_det">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score_det</span></span><a class="headerlink" href="#src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.score_det" title="Permalink to this definition"></a></dt>
+<dd><p>The sum of the scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float64</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.scores_df">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scores_df</span></span><a class="headerlink" href="#src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.scores_df" title="Permalink to this definition"></a></dt>
+<dd><p>Dataframe containing the scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.train">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">train</span></span><a class="headerlink" href="#src.scoring.ska_sdc.sdc2.models.sdc2_score.Sdc2Score.train" title="Permalink to this definition"></a></dt>
+<dd><p>If True, has evaluated score based on training area, else excludes
+training area.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.scoring.ska_sdc.sdc2.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.scoring.ska_sdc.sdc2.models" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

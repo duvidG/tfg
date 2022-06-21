@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.mask_prediction package &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="src.nn_model package" href="src.nn_model.html" />
+    <link rel="prev" title="src.galaxy_creation package" href="src.galaxy_creation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">galaxy-detector</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="src.html">src package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="src.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="src.data_modifications.html">src.data_modifications package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.galaxy_creation.html">src.galaxy_creation package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">src.mask_prediction package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.nn_model.html">src.nn_model package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.read_data.html">src.read_data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="src.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.html#module-src.classification">src.classification module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.html#module-src.errors">src.errors module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.html#module-src">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">galaxy-detector</a> &raquo;</li>
+          <li><a href="src.html">src package</a> &raquo;</li>
+      <li>src.mask_prediction package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/src.mask_prediction.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="src-mask-prediction-package">
+<h1>src.mask_prediction package<a class="headerlink" href="#src-mask-prediction-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-src.mask_prediction.draw_mask">
+<span id="src-mask-prediction-draw-mask-module"></span><h2>src.mask_prediction.draw_mask module<a class="headerlink" href="#module-src.mask_prediction.draw_mask" title="Permalink to this heading"></a></h2>
+<p>Created on Wed Jun 15 16:29:49 2022</p>
+<p>&#64;author: dgiron</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.mask_prediction.draw_mask.create_mask">
+<span class="sig-prename descclassname"><span class="pre">src.mask_prediction.draw_mask.</span></span><span class="sig-name descname"><span class="pre">create_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sdss_pixelscale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_num</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/mask_prediction/draw_mask.html#create_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.mask_prediction.draw_mask.create_mask" title="Permalink to this definition"></a></dt>
+<dd><p>Creates the final mask from the three predicted ones, with labels [0, 1, 2]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pred_mask</strong> (<em>list</em><em>(</em><em>pd.DataFrame</em><em>)</em>) – list with the output of the NN, i.e., the 3 masks, to transform coordinates
+from the minicube to the full cube.</p></li>
+<li><p><strong>idx</strong> (<em>list</em>) – list with the index of the image.</p></li>
+<li><p><strong>cols</strong> (<em>list</em>) – list with the column names of the image, to transform coordinates
+from the minicube to the full cube.</p></li>
+<li><p><strong>thr</strong> (<em>float</em>) – minimum value to consider pixels as part of galaxies instead of background.</p></li>
+<li><p><strong>sdss_pixelscale</strong> (<em>float</em>) – degrees per pixel, using astropy units module.</p></li>
+<li><p><strong>wcs</strong> (<em>WCS</em>) – header of the FITS file, as an object of WCS class, from astropy.</p></li>
+<li><p><strong>img_num</strong> (<em>int</em><em>, </em><em>optional</em>) – number of the image. The default is 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>pd.DataFrame</em> – predicted mask.</p></li>
+<li><p><em>pd.DataFrame</em> – predicted catalogue, with the same format as the original.</p></li>
+<li><p><em>pd.DataFrame</em> – predicted catalogue, with everything in pixels.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.mask_prediction.draw_mask.display">
+<span class="sig-prename descclassname"><span class="pre">src.mask_prediction.draw_mask.</span></span><span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">display_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">small_cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_catalogue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lth=1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap=&lt;matplotlib.colors.LinearSegmentedColormap</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/mask_prediction/draw_mask.html#display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.mask_prediction.draw_mask.display" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.mask_prediction.draw_mask.draw_predictions">
+<span class="sig-prename descclassname"><span class="pre">src.mask_prediction.draw_mask.</span></span><span class="sig-name descname"><span class="pre">draw_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">small_cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sdss_pixelscale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/mask_prediction/draw_mask.html#draw_predictions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.mask_prediction.draw_mask.draw_predictions" title="Permalink to this definition"></a></dt>
+<dd><p>Creates the mask from the prediction masks and draws a figure comparing the
+real image and both masks (original and predicted)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predictions</strong> (<em>list</em>) – list with the 3 masks.</p></li>
+<li><p><strong>img</strong> (<em>pd.DataFrame</em>) – original small image.</p></li>
+<li><p><strong>real_mask</strong> (<em>pd.DataFrame</em>) – mask generated from the catalogue.</p></li>
+<li><p><strong>small_cat</strong> (<em>pd.DataFrame</em>) – catalogue of the small image.</p></li>
+<li><p><strong>thr</strong> (<em>float</em>) – minimum value to consider pixels as part of galaxies instead of background.</p></li>
+<li><p><strong>sdss_pixelscale</strong> (<em>float</em>) – degrees per pixel, using astropy units module.</p></li>
+<li><p><strong>wcs</strong> (<em>WCS</em>) – header of the FITS file, as an object of WCS class, from astropy.</p></li>
+<li><p><strong>img_num</strong> (<em>int</em><em>, </em><em>optional</em>) – number of the image. The default is 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>new_catalogue</strong> – predicted catalogue.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.mask_prediction">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.mask_prediction" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="src.galaxy_creation.html" class="btn btn-neutral float-left" title="src.galaxy_creation package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="src.nn_model.html" class="btn btn-neutral float-right" title="src.nn_model package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

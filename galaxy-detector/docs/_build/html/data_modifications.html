@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>data_modifications package &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>data_modifications package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/data_modifications.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="data-modifications-package">
+<h1>data_modifications package<a class="headerlink" href="#data-modifications-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-src.data_modifications.algorithms">
+<span id="data-modifications-algorithms-module"></span><h2>data_modifications.algorithms module<a class="headerlink" href="#module-src.data_modifications.algorithms" title="Permalink to this heading"></a></h2>
+<p>Created on Fri Mar  4 13:55:22 2022</p>
+<p>&#64;author: dgiron</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.data_modifications.algorithms.mean_frec">
+<span class="sig-prename descclassname"><span class="pre">src.data_modifications.algorithms.</span></span><span class="sig-name descname"><span class="pre">mean_frec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/data_modifications/algorithms.html#mean_frec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.data_modifications.algorithms.mean_frec" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a 2D image from the 3 dimensional images provided (in frecuency
+dimension) by doing the mean of all of them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – list with the data arrays.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>reduced_data</strong> – mean of ll the images.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.data_modifications.data_splitting">
+<span id="data-modifications-data-splitting-module"></span><h2>data_modifications.data_splitting module<a class="headerlink" href="#module-src.data_modifications.data_splitting" title="Permalink to this heading"></a></h2>
+<p>Created on Fri Mar  4 14:00:22 2022</p>
+<p>&#64;author: dgiron</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.data_modifications.data_splitting.no_remaining_pixels">
+<span class="sig-prename descclassname"><span class="pre">src.data_modifications.data_splitting.</span></span><span class="sig-name descname"><span class="pre">no_remaining_pixels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_per_box</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remaining_pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlapping</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalogue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/data_modifications/data_splitting.html#no_remaining_pixels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.data_modifications.data_splitting.no_remaining_pixels" title="Permalink to this definition"></a></dt>
+<dd><p>Algorithm to split the full datacube when the number of pixels in any direction is a multiple of
+the number of datacubes. All the mini datacubes will have the same dimensions.
+Overlaps in the borders of the datacube are not considered. Instead a double size overlap is
+considered in the borders of the minicube which are not in the border of the full datacube.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_boxes</strong> (<em>int</em>) – number of boxes to divide the dataset in each direction.</p></li>
+<li><p><strong>pixel_per_box</strong> (<em>int</em>) – quotient of number of pixels in one direction over number of boxes.</p></li>
+<li><p><strong>remaining_pixels</strong> (<em>int</em>) – remainder of the division.</p></li>
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – 2D dataframe with data. The labels must be in pixels, starting from zero</p></li>
+<li><p><strong>overlapping</strong> (<em>int</em>) – number of pixels that will form the overlapping region.</p></li>
+<li><p><strong>multi_row</strong> (<em>np.ndarray</em>) – array with the numbers to multiply the horizontal overlap. First element
+multiplies the left overlap and second the right one</p></li>
+<li><p><strong>multi_col</strong> (<em>np.ndarray</em>) – array with the numbers to multiply the vertical overlap. First element
+multiplies the overlap above and second the below one.</p></li>
+<li><p><strong>catalogue</strong> (<em>pd.DataFrame</em>) – catalogue with all the sources.</p></li>
+<li><p><strong>len_vert</strong> (<em>int</em>) – length of the datacube.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data_splitted</strong> – list containing all the splitted data. Each element of the list, i.e.,
+each small datacube has the same dimensions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.data_modifications.data_splitting.overlap_bigger_than_remaining">
+<span class="sig-prename descclassname"><span class="pre">src.data_modifications.data_splitting.</span></span><span class="sig-name descname"><span class="pre">overlap_bigger_than_remaining</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_per_box</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remaining_pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlapping</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalogue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_vert</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/data_modifications/data_splitting.html#overlap_bigger_than_remaining"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.data_modifications.data_splitting.overlap_bigger_than_remaining" title="Permalink to this definition"></a></dt>
+<dd><p>Algorithm to split the full datacube when the number of pixels in the overlapping
+part is bigger than the number of pixels w/o mini datacube. This remaining
+pixels will form a mini datacube with the mirrored image of the full datacube
+(pixels of the mirrored image are taken until the last mini cube is full).
+All the mini datacubes will have the same dimensions. Overlaps in the borders
+of the datacube are not considered. Instead a double sized overlap is
+considered in the borders of the minicube which are not in the border of
+the full datacube.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_boxes</strong> (<em>int</em>) – number of boxes to divide the dataset in each direction..</p></li>
+<li><p><strong>pixel_per_box</strong> (<em>int</em>) – quotient of number of pixels in one direction over number of boxes.</p></li>
+<li><p><strong>remaining_pixels</strong> (<em>int</em>) – remainder of the division.</p></li>
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – 2D dataframe with data. The labels must be in pixels, starting from zero</p></li>
+<li><p><strong>overlapping</strong> (<em>int</em>) – number of pixels that will form the overlapping region.</p></li>
+<li><p><strong>multi_row</strong> (<em>np.ndarray</em>) – array with the numbers to multiply the horizontal overlap. First element
+multiplies the left overlap and second the right one</p></li>
+<li><p><strong>multi_col</strong> (<em>np.ndarray</em>) – array with the numbers to multiply the vertical overlap. First element
+multiplies the overlap above and second the below one.</p></li>
+<li><p><strong>catalogue</strong> (<em>pd.DataFrame</em>) – catalogue with all the sources.</p></li>
+<li><p><strong>len_vert</strong> (<em>int</em>) – length of the datacube.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data_splitted</strong> – list containing all the splitted data. Each element of the list, i.e.,
+each small datacube has the same dimensions.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.data_modifications.data_splitting.overlap_smaller_than_remaining">
+<span class="sig-prename descclassname"><span class="pre">src.data_modifications.data_splitting.</span></span><span class="sig-name descname"><span class="pre">overlap_smaller_than_remaining</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_per_box</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remaining_pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlapping</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalogue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_vert</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/data_modifications/data_splitting.html#overlap_smaller_than_remaining"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.data_modifications.data_splitting.overlap_smaller_than_remaining" title="Permalink to this definition"></a></dt>
+<dd><p>Algorithm to split the full datacube when the number of pixels in the overlapping
+part is smaller than the number of pixels w/o mini datacube. This remaining
+pixels will form a mini datacube with the mirrored image of the full datacube
+(pixels of the mirrored image are taken until the last mini cube is full).
+All the mini datacubes will have the same dimensions. Overlaps in the borders
+of the datacube are not considered. Instead a double size overlap is
+considered in the borders of the minicube which are not in the border
+of the full datacube.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_boxes</strong> (<em>int</em>) – number of boxes to divide the dataset in each direction..</p></li>
+<li><p><strong>pixel_per_box</strong> (<em>int</em>) – quotient of number of pixels in one direction over number of boxes.</p></li>
+<li><p><strong>remaining_pixels</strong> (<em>int</em>) – remainder of the division.</p></li>
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – 2D dataframe with data. The labels must be in pixels, starting from zero</p></li>
+<li><p><strong>overlapping</strong> (<em>int</em>) – number of pixels that will form the overlapping region.</p></li>
+<li><p><strong>multi_row</strong> (<em>np.ndarray</em>) – array with the numbers to multiply the horizontal overlap. First element
+multiplies the left overlap and second the right one</p></li>
+<li><p><strong>multi_col</strong> (<em>np.ndarray</em>) – array with the numbers to multiply the vertical overlap. First element
+multiplies the overlap above and second the below one.</p></li>
+<li><p><strong>catalogue</strong> (<em>pd.DataFrame</em>) – catalogue with all the sources.</p></li>
+<li><p><strong>len_vert</strong> (<em>int</em>) – length of the datacube.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data_splitted</strong> – list containing all the splitted data. Each element of the list, i.e.,
+each small datacube has the same dimensions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.data_modifications.data_splitting.split_into_small_boxes">
+<span class="sig-prename descclassname"><span class="pre">src.data_modifications.data_splitting.</span></span><span class="sig-name descname"><span class="pre">split_into_small_boxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_pixel_per_box</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalogue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/data_modifications/data_splitting.html#split_into_small_boxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.data_modifications.data_splitting.split_into_small_boxes" title="Permalink to this definition"></a></dt>
+<dd><p>Splits a 2D datacube into the (number of boxes * number of boxes) given as parameter.
+It also considers overlapping to include galaxies just in the boundary of
+the small datacubes. The catalogue for the sources is also splitted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – 2D dataframe with data.</p></li>
+<li><p><strong>final_pixel_per_box</strong> (<em>int</em>) – size of the small datacube in any direction, including overlap.</p></li>
+<li><p><strong>catalogue</strong> (<em>pd.DataFrame</em>) – catalogue of the sources in the full datacube. ‘ra’ and ‘dec’ column
+must be given in pixels</p></li>
+<li><p><strong>overlapping</strong> (<em>int</em><em>, </em><em>optional</em>) – number of extra entries to consider in each minicube, given in pixels.
+‘auto’ option uses an overlap equal to the maximum size of a galaxy in
+the whole datacube. The default is ‘auto’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="src.html#src.errors.DimensionError" title="src.errors.DimensionError"><strong>DimensionError</strong></a> – if number of boxes is bigger than the number of entries in any direction.
+    if the remaining pixels are bigger than the length of a small datacube
+    if overlapping is bigger than the size of a small datacube</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>data_splitted</strong> (<em>list</em>) – list with the small dataframes.</p></li>
+<li><p><strong>truth_cat_splitted</strong> (<em>list</em>) – list with catalogues for each of the small datacubes</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.data_modifications">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.data_modifications" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

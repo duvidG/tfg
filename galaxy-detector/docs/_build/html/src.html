@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src package &mdash; Galaxy detector 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="src.data_modifications package" href="src.data_modifications.html" />
+    <link rel="prev" title="main module" href="main.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Galaxy detector
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">galaxy-detector</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">src package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.data_modifications.html">src.data_modifications package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.galaxy_creation.html">src.galaxy_creation package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.mask_prediction.html">src.mask_prediction package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.nn_model.html">src.nn_model package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.read_data.html">src.read_data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.classification">src.classification module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.errors">src.errors module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Galaxy detector</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">galaxy-detector</a> &raquo;</li>
+      <li>src package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/src.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="src-package">
+<h1>src package<a class="headerlink" href="#src-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src.data_modifications.html">src.data_modifications package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.data_modifications.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.data_modifications.html#module-src.data_modifications.algorithms">src.data_modifications.algorithms module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.data_modifications.html#module-src.data_modifications.data_splitting">src.data_modifications.data_splitting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.data_modifications.html#module-src.data_modifications">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.galaxy_creation.html">src.galaxy_creation package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.galaxy_creation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.galaxy_creation.html#module-src.galaxy_creation.ellipse_generation">src.galaxy_creation.ellipse_generation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.galaxy_creation.html#module-src.galaxy_creation">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.mask_prediction.html">src.mask_prediction package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.mask_prediction.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.mask_prediction.html#module-src.mask_prediction.draw_mask">src.mask_prediction.draw_mask module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.mask_prediction.html#module-src.mask_prediction">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.nn_model.html">src.nn_model package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.nn_model.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.nn_model.html#module-src.nn_model.models">src.nn_model.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.nn_model.html#module-src.nn_model">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.read_data.html">src.read_data package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.read_data.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.read_data.html#module-src.read_data.save_data">src.read_data.save_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.read_data.html#module-src.read_data">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-src.classification">
+<span id="src-classification-module"></span><h2>src.classification module<a class="headerlink" href="#module-src.classification" title="Permalink to this heading"></a></h2>
+<p>Created on Fri Mar  4 11:45:39 2022</p>
+<p>&#64;author: dgiron</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.classification.GalaxyDetector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.classification.</span></span><span class="sig-name descname"><span class="pre">GalaxyDetector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cube_dimensions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlapping</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_to_reduce_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_file_ps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_major_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_minor_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flujo_min</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/classification.html#GalaxyDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.classification.GalaxyDetector" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.classification.GalaxyDetector.plot_datacube_label">
+<span class="sig-name descname"><span class="pre">plot_datacube_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_datacube</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/classification.html#GalaxyDetector.plot_datacube_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.classification.GalaxyDetector.plot_datacube_label" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the label for a given datacube</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>number_of_datacube</strong> (<em>int</em>) – number of the datacube to plot.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.classification.GalaxyDetector.plot_flux_histogram">
+<span class="sig-name descname"><span class="pre">plot_flux_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/classification.html#GalaxyDetector.plot_flux_histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.classification.GalaxyDetector.plot_flux_histogram" title="Permalink to this definition"></a></dt>
+<dd><p>Plot a histogram with the sizes of the galaxies</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>bins</strong> (<em>int</em>) – number of bins.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.classification.GalaxyDetector.plot_full_reduced_datacube">
+<span class="sig-name descname"><span class="pre">plot_full_reduced_datacube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pix'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/classification.html#GalaxyDetector.plot_full_reduced_datacube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.classification.GalaxyDetector.plot_full_reduced_datacube" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the whole datacube with the catalogue over it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coords</strong> (<em>str</em><em>, </em><em>optional</em>) – type of coordinates for the axis, pix or equatorial. The default is ‘pix’.</p></li>
+<li><p><strong>lth</strong> (<em>float</em><em>, </em><em>optional</em>) – lth parameter of matplotlib log normalization. The default is 1e-5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.classification.GalaxyDetector.plot_small_reduced_datacube">
+<span class="sig-name descname"><span class="pre">plot_small_reduced_datacube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_datacube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/classification.html#GalaxyDetector.plot_small_reduced_datacube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.classification.GalaxyDetector.plot_small_reduced_datacube" title="Permalink to this definition"></a></dt>
+<dd><p>Plot a small datacube from the list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_datacube</strong> (<em>int</em><em>, </em><em>optional</em>) – number of the desired datacube. The default is 0.</p></li>
+<li><p><strong>lth</strong> (<em>float</em><em>, </em><em>optional</em>) – lth parameter of matplotlib log normalization. The default is 7e-6.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.classification.GalaxyDetector.prediction">
+<span class="sig-name descname"><span class="pre">prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_cat_small</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/classification.html#GalaxyDetector.prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.classification.GalaxyDetector.prediction" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dim</strong> (<em>int</em>) – size of the trained image in one direction.</p></li>
+<li><p><strong>img_num</strong> (<em>int</em>) – number of the image (to plot the title).</p></li>
+<li><p><strong>img</strong> (<em>pd.DataFrame</em>) – image to evaluate.</p></li>
+<li><p><strong>real_mask</strong> (<em>pd.DataFrame</em>) – mask obtained from catalogue, to plot next to the predicted mask.</p></li>
+<li><p><strong>truth_cat_small</strong> (<em>pd.DataFrame</em>) – catalogue of the small image.</p></li>
+<li><p><strong>thr</strong> (<em>float</em>) – minimum value to consider pixels as part of galaxies instead of background.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>new_catalogue</strong> – predicted catalogue.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pdDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.classification.GalaxyDetector.score">
+<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truth_catalogue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/classification.html#GalaxyDetector.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.classification.GalaxyDetector.score" title="Permalink to this definition"></a></dt>
+<dd><p>Calls the score software, from the developers of the challenge</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predicted_catalogue</strong> (<em>str</em>) – route to predicted catalogue.</p></li>
+<li><p><strong>truth_catalogue</strong> (<em>str</em>) – route to truth catalogue.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>result</strong> – object which has the information of the score in its attributes.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Sdc2Score object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.classification.GalaxyDetector.solve_NN">
+<span class="sig-name descname"><span class="pre">solve_NN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fraction_of_training</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EPOCHS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">architecture</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'unet_2d'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'adam'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sparse_categorical_crossentropy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'accuracy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patience</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/classification.html#GalaxyDetector.solve_NN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.classification.GalaxyDetector.solve_NN" title="Permalink to this definition"></a></dt>
+<dd><p>Trains the neural network</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fraction_of_training</strong> (<em>float</em>) – fraction of the whole dataseet to use in training the NN.</p></li>
+<li><p><strong>dim</strong> (<em>int</em>) – dimensions of the images.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – size of the batches used in the training.</p></li>
+<li><p><strong>EPOCHS</strong> (<em>int</em>) – total number of epochs.</p></li>
+<li><p><strong>filt</strong> (<em>list</em>) – list with filters for each layer. The list should end at the bottom
+of the ‘U’. The filters of the other half are obtained from these.</p></li>
+<li><p><strong>architecture</strong> (<em>str</em><em>, </em><em>optional</em>) – keyword of the desired architecture. List of the available keywords
+is provided in the keras-unet-collection documentation. The default is ‘unet_2d’.</p></li>
+<li><p><strong>optimizer</strong> (<em>str</em><em> or </em><em>Optimizer</em><em>, </em><em>optional</em>) – name of the optimizer. The default is ‘adam’.</p></li>
+<li><p><strong>loss</strong> (<em>str</em><em>, </em><em>optional</em>) – name of the loss function. The default is ‘sparse_categorical_crossentropy’.</p></li>
+<li><p><strong>metrics</strong> (<em>str</em><em>, </em><em>optional</em>) – name of the metrics. The default is ‘accuracy’.</p></li>
+<li><p><strong>save_scheme</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, it saves the scheme of the model in the imgs folder. The default is False.</p></li>
+<li><p><strong>patience</strong> (<em>int</em><em>, </em><em>optional</em>) – patience parameter for the early stopping. The default is 10.</p></li>
+<li><p><strong>verbose</strong> (<em>int</em><em>, </em><em>optional</em>) – verbose parameter for the early stopping. The default is 1.</p></li>
+<li><p><strong>dil</strong> (<em>float</em><em>, </em><em>optional</em>) – dilatation parameter. It is only used in resunet_a_2d architecture. The default is 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.errors">
+<span id="src-errors-module"></span><h2>src.errors module<a class="headerlink" href="#module-src.errors" title="Permalink to this heading"></a></h2>
+<p>Created on Sun Oct 31 19:00:33 2021</p>
+<p>&#64;author: dgiron</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="src.errors.DimensionError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.errors.</span></span><span class="sig-name descname"><span class="pre">DimensionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/errors.html#DimensionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.errors.DimensionError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.errors.Error" title="src.errors.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Exception raised for errors in the data dimension management.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">expression</span> <span class="pre">--</span> <span class="pre">input</span> <span class="pre">expression</span> <span class="pre">in</span> <span class="pre">which</span> <span class="pre">the</span> <span class="pre">error</span> <span class="pre">occurred</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">message</span> <span class="pre">--</span> <span class="pre">explanation</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">error</span></span></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="src.errors.Error">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.errors.</span></span><span class="sig-name descname"><span class="pre">Error</span></span><a class="reference internal" href="_modules/src/errors.html#Error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.errors.Error" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Base class for exceptions in this module.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="src.errors.InputError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.errors.</span></span><span class="sig-name descname"><span class="pre">InputError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/errors.html#InputError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.errors.InputError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.errors.Error" title="src.errors.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Exception raised for errors in the input.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">expression</span> <span class="pre">--</span> <span class="pre">input</span> <span class="pre">expression</span> <span class="pre">in</span> <span class="pre">which</span> <span class="pre">the</span> <span class="pre">error</span> <span class="pre">occurred</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">message</span> <span class="pre">--</span> <span class="pre">explanation</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">error</span></span></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="src.errors.NeighListError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.errors.</span></span><span class="sig-name descname"><span class="pre">NeighListError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/errors.html#NeighListError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.errors.NeighListError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.errors.Error" title="src.errors.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Exception raised for errors in the input.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">expression</span> <span class="pre">--</span> <span class="pre">input</span> <span class="pre">expression</span> <span class="pre">in</span> <span class="pre">which</span> <span class="pre">the</span> <span class="pre">error</span> <span class="pre">occurred</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">message</span> <span class="pre">--</span> <span class="pre">explanation</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">error</span></span></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="src.errors.PackageError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.errors.</span></span><span class="sig-name descname"><span class="pre">PackageError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/errors.html#PackageError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.errors.PackageError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.errors.Error" title="src.errors.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Exception raised for errors in the input.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">expression</span> <span class="pre">--</span> <span class="pre">input</span> <span class="pre">expression</span> <span class="pre">in</span> <span class="pre">which</span> <span class="pre">the</span> <span class="pre">error</span> <span class="pre">occurred</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">message</span> <span class="pre">--</span> <span class="pre">explanation</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">error</span></span></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="main.html" class="btn btn-neutral float-left" title="main module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="src.data_modifications.html" class="btn btn-neutral float-right" title="src.data_modifications package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, David Giron Ceballos.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
