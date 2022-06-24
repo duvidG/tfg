@@ -8,4 +8,28 @@ astropy
 tensorflow.keras
 keras
 keras-unet-collection
+# Linting and formatting
+flake8
+pep8-naming
+black
+
+# Testing
+pytest
+pytest-html
+pytest-cov
+
+# Logging and documentation
+sphinx
+sphinx_rtd_theme
+
+# Data processing libraries
+astropy
+numpy
+pandas
+scikit-learn
+
+# Packaging
+setuptools
+wheel
+
 ./galaxy-detector/
