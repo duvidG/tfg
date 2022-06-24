@@ -1,11 +1,11 @@
-src.galaxy\_creation package
-============================
+galaxy\_creation package
+========================
 
 Submodules
 ----------
 
-src.galaxy\_creation.ellipse\_generation module
------------------------------------------------
+galaxy\_creation.ellipse\_generation module
+-------------------------------------------
 
 .. automodule:: src.galaxy_creation.ellipse_generation
    :members:
