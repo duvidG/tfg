@@ -5,7 +5,6 @@ pandas
 matplotlib
 numpy
 astropy
-tensorflow.keras
 keras
 keras-unet-collection
 # Linting and formatting
