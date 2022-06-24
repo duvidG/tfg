@@ -1,5 +1,6 @@
 autodocsumm
 sphinx_rtd_theme
+python==3.6.3
 tensorflow
 pandas
 matplotlib
@@ -11,6 +12,7 @@ keras-unet-collection
 flake8
 pep8-naming
 black
+
 
 # Testing
 pytest
