@@ -6,4 +6,5 @@ matplotlib
 numpy
 astropy
 keras
+keras-unet-collection
 ./galaxy-detector/
