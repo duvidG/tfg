@@ -1,6 +1,5 @@
 autodocsumm
 sphinx_rtd_theme
-python==3.6.3
 tensorflow
 pandas
 matplotlib
