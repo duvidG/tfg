@@ -24,7 +24,7 @@ def main():
 
     """
     plt.close('all')
-    plt.ioff()
+
     start_time = time.time()
     
     # File names
@@ -38,36 +38,37 @@ def main():
     
     # Common parameters
     dim = 64
-    # flujo_min = 0
     flujo_min = 12.5
     reduction_function = "mean_frec"
     overlapping = 'auto'
-
+    
+    # Create a object of the class GalaxyDetector
 
     file_size = 'b'
     if file_size == 'b':
         train = GalaxyDetector(data_file, dim, overlapping, reduction_function, 
                                truth_cat, data_file_ps, 
                                min_major_length=0, min_minor_length=0, 
-                               flujo_min=flujo_min)
+                               flujo_min=flujo_min, norm='max')
     if file_size == 's':
         train = GalaxyDetector(data_file_small, dim, overlapping, reduction_function, 
                                truth_cat_small, data_file_ps_small,
                                min_major_length=0, min_minor_length=0,
-                               flujo_min=flujo_min)
+                               flujo_min=flujo_min, norm='max')
+        
+        
     
-    # Imprimir figs intermedias [409, 455, 472, 509, 539, 612, 619, 644, 667, 680, 689, 696]
-    # for i in range(0, train.length_list_minicubes):
-    #     if i in [115]:
-    #         train.plot_datacube_label(i)
-    #         plt.savefig('../informe/imgs/resultados_label_'+str(i)+'.png')
-    #         # train.plot_small_reduced_datacube(i)
-    #         # plt.savefig('imgs/resultados_minicube_prueba'+str(i)+'.png')
-    #         plt.close('all')
-        # train.plot_small_reduced_datacube(i)
-    # train.plot_small_reduced_datacube(-1)
-    # train.plot_full_reduced_datacube()
-    # train.plot_flux_histogram(20)
+    # Plot the mask of the datacube number 0 
+    train.plot_datacube_label(0)
+    
+    # Draw the image of the small datacube number 0
+    train.plot_small_reduced_datacube(0) 
+    
+    # Draw the original dataset, after the reduction of dimensions
+    train.plot_full_reduced_datacube()
+    
+    # Plot histogram of the sources, attending to its integrated flux
+    train.plot_flux_histogram(20) 
     
     # Prueba NN
         # Hyperparameters
@@ -76,19 +77,21 @@ def main():
     batch_size = 32
     epochs = 200
     
+    # Datacube to test the net
     file_size = 's'
     if file_size == 'b':
         test = GalaxyDetector(data_file, dim, overlapping, reduction_function, 
                               truth_cat, data_file_ps, 
                               min_major_length=0, min_minor_length=0, 
-                              flujo_min=flujo_min)
+                              flujo_min=flujo_min, norm='max')
     if file_size == 's':
         test = GalaxyDetector(data_file_small, dim, overlapping, reduction_function, 
                               truth_cat_small, data_file_ps_small, 
                               min_major_length=0, min_minor_length=0, 
-                              flujo_min=flujo_min)
+                              flujo_min=flujo_min, norm='max')
         
     
+    # Learning rate function
     initial_learning_rate = 0.1
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
         initial_learning_rate,
@@ -97,32 +100,23 @@ def main():
         staircase=True)
     
     
-    
+    # Method to train the N
     train.solve_NN(fraction_for_training, dim, 
                     batch_size, epochs, filt='auto', optimizer=tf.keras.optimizers.SGD(learning_rate=lr_schedule),
-                    architecture='swin_unet_2d', save_scheme=False)
+                    architecture='first_model', save_scheme=True)
+    
+    # Make predictions with the normalized images of the small dataset, saving the catalogue in a DataFrame
     final_catalogue = pd.DataFrame([], columns= ['ra', 'dec', 'hi_size', 'i', 'pa'])
     for i in range(0, test.length_list_minicubes, 1):
-        new_catalogue = train.prediction(dim='auto', img=test.small_datacubes[i], real_mask=test.all_total_labels[i], 
+        new_catalogue = train.prediction(dim='auto', img=test.small_datacubes_norm[i], real_mask=test.all_total_labels[i], 
                           img_num=i, truth_cat_small=test.truth_cat_small[i], thr=threshold)
-        
         final_catalogue = pd.concat([final_catalogue, new_catalogue], ignore_index=True)
         
-        
-        # plt.close('all')
-
-    
+                
+    # Prepare the catalogue to be saved in a csv file
     final_catalogue.index.name = 'id'
-    final_catalogue['line_flux_integral'] = np.mean(test.truth_cat_original['line_flux_integral'])
-    final_catalogue['central_freq'] = np.mean(test.truth_cat_original['central_freq'])
-    final_catalogue['w20'] = np.mean(test.truth_cat_original['w20'])
-    cols = ['ra', 'dec', 'hi_size', 'line_flux_integral', 'central_freq', 'pa', 'i', 'w20']
-    final_catalogue = final_catalogue[cols]
     
     
-    
-    
-    # final_catalogue.index[0] = 'id'
     final_catalogue = final_catalogue.apply(pd.to_numeric)
 
     final_catalogue.to_csv('src/output/final_catalogue.csv')
@@ -130,7 +124,11 @@ def main():
     truth_cat = test.truth_cat_original
     truth_cat.index.name = 'id'
     truth_cat.to_csv("src/output/truth_catalogue.csv")
-    # score = GalaxyDetector.score('src/output/final_catalogue.csv', "src/output/truth_catalogue.csv")
+    
+    # Evaluate the model
+    matched_cat, stats = GalaxyDetector.score2(final_catalogue, truth_cat, 20)
+    
+    print(stats)
     
     print("--- %s seconds ---" % (time.time() - start_time))
 
