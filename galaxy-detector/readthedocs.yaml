@@ -14,11 +14,11 @@ formats:
 
 # Optionally set the version of Python and requirements required to build your docs
 python:
-  version: 3.8
+  version: 3.10
   install:
     - method: pip
       path: .
   install:
-    - requirements: docs/requirements.txt
+    - requirements: galaxy-detector/docs/requirements.txt
     - method: pip
       path: . 
