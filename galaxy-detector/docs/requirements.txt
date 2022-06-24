@@ -5,4 +5,5 @@ pandas
 matplotlib
 numpy
 astropy
+keras
 ./galaxy-detector/
