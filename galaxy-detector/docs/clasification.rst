@@ -1,7 +1,7 @@
 clasification module
 ====================
 
-.. automodule:: src.clasification
+.. automodule:: src.classification
    :members:
    :undoc-members:
    :show-inheritance:
